@@ -2,14 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #2ecc71;
+  --primary-color: #3eb96d;
+  --secondary-color: #84c2ff;
   --background-color: #ecf0f1;
   --text-color: #34495e;
   --card-background: #ffffff;
   --shadow-color: rgba(0, 0, 0, 0.1);
   --accent-color: #e74c3c;
-  --menu-background: rgba(52, 152, 219, 0.95);
+  --menu-background: rgba(145, 204, 130, 0.95);
 }
 
 body {
