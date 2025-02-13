@@ -19,7 +19,7 @@
     />
     <meta
       name="keywords"
-      content="高雄區, 會考, 落點分析, 教育, 學校"
+      content="高雄區, 會考, 落點分析, 教育, 學校,武陵高中,中壢高中,內壢高中,平鎮高中,大園高中,永豐高中,南崁高中,振聲高中,楊梅高中,治平高中,新興高中,關西高中,大溪高中"
     />
     <meta name="author" content="高雄區教育局" />
     <!-- External JS Libraries -->
@@ -43,16 +43,16 @@
       <div class="close-menu" onclick="toggleMenu()">
         <i class="fas fa-times"></i>
       </div>
-      <a href="https://sites.google.com/view/tyctw/" target="_blank">
+      <a href="https://sites.google.com/view/khtw/" target="_blank">
         <i class="fas fa-school"></i> 回到主網頁
       </a>
-      <a href="https://tyctw.github.io/sequence/" target="_blank">
+      <a href="https://khh.github.io/sequence/" target="_blank">
         <i class="fas fa-pencil-alt"></i> 各校序位推估
       </a>
-      <a href="https://tyctw.github.io/report_form" target="_blank">
+      <a href="https://khhtw.github.io/report_form" target="_blank">
         <i class="fas fa-exclamation-triangle"></i> 系統異常回報
       </a>
-      <a href="https://tyctw.github.io/Navigation/">
+      <a href="https://khhtw.github.io/Navigation/">
         <i class="fas fa-university"></i> 查看更多資訊
       </a>
     </div>
@@ -338,6 +338,23 @@
         <i class="fas fa-file-export icon"></i>匯出結果
       </button>
       <div id="results"></div>
+
+      <!-- New User Rating Section -->
+      <div id="ratingSection">
+        <h2><i class="fas fa-star icon"></i> 為KHTW網站評分</h2>
+        <div id="starsContainer">
+          <span class="star" data-value="1">&#9733;</span>
+          <span class="star" data-value="2">&#9733;</span>
+          <span class="star" data-value="3">&#9733;</span>
+          <span class="star" data-value="4">&#9733;</span>
+          <span class="star" data-value="5">&#9733;</span>
+        </div>
+        <button id="submitRating" class="rating-button">
+          <i class="fas fa-paper-plane icon"></i> 提交評分
+        </button>
+        <div id="ratingMessage" style="display: none; margin-top: 10px;"></div>
+      </div>
+
       <div class="copyright">
         &copy; <span id="currentYear"></span> KHTW高雄區會考落點分析系統. All rights reserved.
         <p>本網站由KHTW會考落點分析平台開發維護。未經授權，禁止複製或轉載。</p>
@@ -355,7 +372,7 @@
         <h2>
           <i class="fas fa-balance-scale icon"></i> 免責聲明
         </h2>
-        <a href="https://forms.gle/ZKW3W58gcbQW3vdX9" target="_blank">
+        <a href="https://forms.gle/FRhzNFxGMs9qQYtV7" target="_blank">
           <i class="fas fa-link icon"></i> 填寫表單獲取邀請碼
         </a>
         <p>

@@ -77,7 +77,7 @@ function drag(e) {
 function stopDragging() {
   isDragging = false;
   const modalContent = document.querySelector('.modal-content');
-  if(modalContent) modalContent.style.cursor = 'grab';
+  if (modalContent) modalContent.style.cursor = 'grab';
 }
 
 function closeDisclaimer() {
@@ -85,7 +85,6 @@ function closeDisclaimer() {
   modal.style.display = 'none';
 }
 
-// Invitation Code Validation Animation functions
 function showInvitationValidationAnimation() {
   const invitationGroup = document.getElementById('invitationCode').closest('.form-group');
   if (!invitationGroup) return;
@@ -169,7 +168,6 @@ async function logUserActivity(action, details = {}) {
 }
 
 async function analyzeScores() {
-  // Lock the analysis button while verifying the invitation code
   const analyzeButton = document.getElementById('analyzeButton');
   let originalButtonText = '';
   if (analyzeButton) {
@@ -177,16 +175,9 @@ async function analyzeScores() {
     analyzeButton.disabled = true;
     analyzeButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 驗證中...';
   }
-  
-  // Lock the invitation code input field during verification
-  const invitationInput = document.getElementById('invitationCode');
-  if (invitationInput) {
-    invitationInput.disabled = true;
-  }
 
   try {
-    const invitationCode = invitationInput.value;
-    // 增加驗證邀請碼是否有填寫
+    const invitationCode = document.getElementById('invitationCode').value;
     if (invitationCode.trim() === "") {
       alert("請填寫邀請碼");
       if (analyzeButton) {
@@ -308,10 +299,6 @@ async function analyzeScores() {
       analyzeButton.disabled = false;
       analyzeButton.innerHTML = originalButtonText;
     }
-    // Re-enable the invitation code input field after validation is complete
-    if (invitationInput) {
-      invitationInput.disabled = false;
-    }
     hideLoading();
   }
 }
@@ -343,6 +330,7 @@ function displayResults(data) {
       });
       results += '</ul>';
     });
+    results += '<h3>統計</h3><div id="statistics"></div>';
   } else {
     results += '<p class="result-item"><i class="fas fa-exclamation-triangle icon"></i>根據您的成績，暫時沒有符合條件的學校。</p>';
   }
@@ -354,7 +342,55 @@ function displayResults(data) {
     resultsElement.style.display = 'block';
     resultsElement.style.animation = 'fadeIn 0.5s ease-out';
     document.getElementById('exportResults').style.display = 'inline-block';
+
+    if (eligibleSchools && eligibleSchools.length > 0) {
+      let groupedSchools = {};
+      eligibleSchools.forEach(school => {
+        if (!groupedSchools[school.type]) {
+          groupedSchools[school.type] = [];
+        }
+        groupedSchools[school.type].push(school.name);
+      });
+      const statisticsContainer = document.getElementById('statistics');
+      if (statisticsContainer) {
+        statisticsContainer.innerHTML = generateStatisticsChart(groupedSchools);
+      }
+    }
   }, 100);
+}
+
+function generateStatisticsChart(groupedSchools) {
+  let chartData = [];
+  let maxValue = 0;
+  for (let type in groupedSchools) {
+    let count = groupedSchools[type].length;
+    chartData.push({ type: type, count: count });
+    if (count > maxValue) {
+      maxValue = count;
+    }
+  }
+  if (chartData.length === 0) {
+    return "<p>無統計數據</p>";
+  }
+  const svgWidth = 500;
+  const barHeight = 30;
+  const barGap = 10;
+  const svgHeight = chartData.length * (barHeight + barGap) + barGap;
+  let svgHtml = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+  let currentY = barGap;
+  chartData.forEach(item => {
+    const labelX = 10;
+    const labelY = currentY + barHeight / 2 + 5;
+    const maxBarWidth = svgWidth - 150;
+    const barWidth = (item.count / maxValue) * maxBarWidth;
+    svgHtml += `<text x="${labelX}" y="${labelY}" font-family="Arial" font-size="14" fill="#34495e">${item.type} (${item.count})</text>`;
+    svgHtml += `<rect x="150" y="${currentY}" width="${barWidth}" height="${barHeight}" fill="#2575fc">
+      <title>${item.count}</title>
+    </rect>`;
+    currentY += barHeight + barGap;
+  });
+  svgHtml += `</svg>`;
+  return svgHtml;
 }
 
 function exportResults() {
@@ -515,3 +551,49 @@ updateDarkModeIcon(savedDarkMode);
 document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
 
 document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+let userRating = 0;
+
+function initRating() {
+  const stars = document.querySelectorAll("#starsContainer .star");
+  stars.forEach(star => {
+    star.addEventListener("click", function() {
+      userRating = Number(this.getAttribute("data-value"));
+      updateStarDisplay(userRating);
+    });
+    star.addEventListener("mouseover", function() {
+      const rating = Number(this.getAttribute("data-value"));
+      updateStarDisplay(rating);
+    });
+    star.addEventListener("mouseout", function() {
+      updateStarDisplay(userRating);
+    });
+  });
+
+  const submitRatingButton = document.getElementById("submitRating");
+  submitRatingButton.addEventListener("click", function() {
+    if (userRating === 0) {
+      alert("請選擇評分星數！");
+      return;
+    }
+    this.disabled = true;
+    logUserActivity("user_rating", { rating: userRating });
+    const ratingMsg = document.getElementById("ratingMessage");
+    ratingMsg.textContent = "感謝您的評分！";
+    ratingMsg.style.display = "block";
+  });
+}
+
+function updateStarDisplay(rating) {
+  const stars = document.querySelectorAll("#starsContainer .star");
+  stars.forEach(star => {
+    const starValue = Number(star.getAttribute("data-value"));
+    if (starValue <= rating) {
+      star.classList.add("active");
+    } else {
+      star.classList.remove("active");
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initRating);
