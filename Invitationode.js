@@ -59,7 +59,7 @@ function handleFormSubmit(e) {
 
   // API call simulation using a dummy endpoint
   fetch(
-    'https://script.google.com/macros/s/AKfycbwj7dCVukOvJ8MR_PsfkymKDfivZppo0RFkqxpJSMVaYZLiNSRgqMwwOIMXNQZByqdfag/exec',
+    'https://script.google.com/macros/s/AKfycbysOHsdczbIUsgjjd-oqMwuomf_AtrA2jzbRbRgnkoBRul_gvtMgK_L1T7Myk_Ddoqc/exec',
     {
       method: 'POST',
       mode: 'no-cors',
