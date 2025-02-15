@@ -170,4 +170,40 @@ document.addEventListener('DOMContentLoaded', () => {
             instructionsModal.style.display = 'none';
         }
     });
+
+    // Prevent page copying and screenshots
+    const preventCopy = (e) => {
+        e.preventDefault();
+    };
+
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', preventCopy);
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
+    document.body.style.mozUserSelect = 'none';
+    document.body.style.msUserSelect = 'none';
+
+    // Disable copying
+    document.addEventListener('copy', preventCopy);
+    document.addEventListener('cut', preventCopy);
+
+
+    // Detect DevTools opening
+    const checkDevTools = () => {
+        const threshold = 160;
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        
+        if (widthThreshold || heightThreshold) {
+            console.clear();
+            // Optional: Take additional actions if DevTools are detected
+        }
+    };
+
+    window.addEventListener('resize', checkDevTools);
 });
