@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('copy', preventCopy);
     document.addEventListener('cut', preventCopy);
 
-
     // Detect DevTools opening
     const checkDevTools = () => {
         const threshold = 160;
@@ -206,4 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addEventListener('resize', checkDevTools);
+
+    // Back to Landing Page Button
+    const backToLandingBtn = document.getElementById('back-to-landing');
+    backToLandingBtn.addEventListener('click', () => {
+        // Replace with the actual URL of your landing page
+        window.location.href = 'index.html';
+    });
 });
