@@ -1,168 +1,215 @@
-// Menu functionality for left-side slide-out
-function initializeMenu() {
-  const menuIcon = document.getElementById('menuIcon');
-  const navMenu = document.getElementById('navMenu');
-
-  menuIcon.addEventListener('click', () => {
-    menuIcon.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
-
-  // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!navMenu.contains(e.target) && !menuIcon.contains(e.target)) {
-      navMenu.classList.remove('active');
-      menuIcon.classList.remove('active');
-    }
-  });
-
-  // Close menu on resize if needed
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-      navMenu.classList.remove('active');
-      menuIcon.classList.remove('active');
-    }
-  });
+function generateInvitationCode() { 
+    const now = new Date(); 
+    const year = now.getFullYear(); 
+    const month = String(now.getMonth() + 1).padStart(2, '0'); 
+    const day = String(now.getDate()).padStart(2, '0'); 
+    const hour = String(now.getHours()).padStart(2, '0'); 
+    return `KHTW${year}${month}${day}${hour}`; 
 }
 
-// Show result message
-function showResult(message, type) {
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = message;
-  resultDiv.className = `result ${type} animate__animated animate__fadeInUp`;
-  resultDiv.style.display = 'block';
+function generateQRCode(code) {
+    const qrCodeContainer = document.getElementById('qr-code-container');
+    qrCodeContainer.innerHTML = ''; // Clear previous QR code
+    
+    const qr = qrcode(0, 'M');
+    qr.addData(code);
+    qr.make();
+    
+    const imgTag = qr.createImgTag(5);
+    qrCodeContainer.innerHTML = imgTag;
 }
 
-// Form submission handling with hCaptcha validation
-function handleFormSubmit(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const submitButton = document.getElementById('submitBtn');
-  const progressBar = document.querySelector('.progress-bar');
-  const progress = document.querySelector('.progress');
-  const captchaResponse = hcaptcha.getResponse();
+function updateCountdownAndCode() {
+    const now = new Date();
+    const codeDisplay = document.getElementById('invitation-code-display');
+    const countdownDisplay = document.getElementById('countdown-display');
+    
+    // Generate and display current invitation code
+    const currentCode = generateInvitationCode();
+    codeDisplay.textContent = currentCode;
+    
+    // Calculate time until next hour
+    const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0);
+    const timeRemaining = nextHour - now;
+    
+    // Convert to minutes and seconds
+    const minutes = Math.floor((timeRemaining / 1000 / 60) % 60);
+    const seconds = Math.floor((timeRemaining / 1000) % 60);
+    
+    // Display countdown
+    countdownDisplay.textContent = `下次更新剩餘 ${minutes} 分 ${seconds} 秒`;
+}
 
-  if (!captchaResponse) {
-    showResult(
-      '<i class="fas fa-exclamation-triangle"></i> 請先完成驗證。',
-      'error'
-    );
-    return;
-  }
-
-  // Disable submit button and show loading state
-  submitButton.disabled = true;
-  submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 發送中...';
-  progressBar.style.display = 'block';
-  gsap.to(progress, { duration: 2, width: '100%', ease: 'power1.inOut' });
-  document.querySelector('.loading-overlay').style.display = 'flex';
-
-  // API call simulation using a dummy endpoint
-  fetch(
-    'https://script.google.com/macros/s/AKfycbxItOAQw73IUugd_DPnv5ml33NTGC4DGSojm0BkNswHAcI2aeyUG1KJnl4lchD4Z88Z/exec',
-    {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `email=${encodeURIComponent(email)}&h-captcha-response=${encodeURIComponent(captchaResponse)}`
-    }
-  )
-    .then(() => {
-      showResult(
-        '<i class="fas fa-check-circle"></i> 邀請碼已發送到您的郵箱，請查收。',
-        'success'
-      );
-      showInfoModal();
-      startCountdown(28800); // 8 hours countdown
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      showResult(
-        `<i class="fas fa-times-circle"></i> 發送失敗: ${error.message}`,
-        'error'
-      );
-      document.querySelector('.card').classList.add('shake');
-    })
-    .finally(() => {
-      // Reset button and progress bar
-      submitButton.disabled = false;
-      submitButton.innerHTML = '發送邀請碼';
-      gsap.to(progressBar, {
-        duration: 0.5,
-        opacity: 0,
-        onComplete: () => {
-          progressBar.style.display = 'none';
-          progress.style.width = '0%';
-        }
-      });
-      document.querySelector('.loading-overlay').style.display = 'none';
-      // Reset the hCaptcha widget
-      if (typeof hcaptcha !== 'undefined') {
-        hcaptcha.reset();
-      }
+function copyInvitationCode() {
+    const codeDisplay = document.getElementById('invitation-code-display');
+    const copyFeedback = document.getElementById('copy-feedback');
+    
+    // Copy the code to clipboard
+    navigator.clipboard.writeText(codeDisplay.textContent).then(() => {
+        // Show feedback
+        copyFeedback.textContent = '已複製邀請碼';
+        copyFeedback.classList.add('show');
+        
+        // Remove feedback after 2 seconds
+        setTimeout(() => {
+            copyFeedback.classList.remove('show');
+        }, 2000);
+    }).catch(err => {
+        console.error('複製失敗', err);
+        copyFeedback.textContent = '複製失敗';
+        copyFeedback.classList.add('show');
+        setTimeout(() => {
+            copyFeedback.classList.remove('show');
+        }, 2000);
     });
 }
 
-// Countdown timer functionality
-function startCountdown(count) {
-  let counter = count;
-  const countdownDiv = document.getElementById('countdown');
-  countdownDiv.style.display = 'block';
-  const intervalId = setInterval(() => {
-    const hours = Math.floor(counter / 3600);
-    const minutes = Math.floor((counter % 3600) / 60);
-    const seconds = counter % 60;
-    countdownDiv.textContent = `您可以在 ${hours} 小時 ${minutes} 分 ${seconds} 秒後再次申請邀請碼。`;
-    counter--;
-    if (counter < 0) {
-      clearInterval(intervalId);
-      countdownDiv.style.display = 'none';
+function toggleQRCode() {
+    const qrCodeContainer = document.getElementById('qr-code-container');
+    const showQRBtn = document.getElementById('show-qr-btn');
+    
+    if (qrCodeContainer.style.display === 'none') {
+        // Generate QR Code when showing
+        const currentCode = document.getElementById('invitation-code-display').textContent;
+        generateQRCode(currentCode);
+        
+        qrCodeContainer.style.display = 'flex';
+        showQRBtn.textContent = '隱藏 QR Code';
+    } else {
+        qrCodeContainer.style.display = 'none';
+        showQRBtn.textContent = '顯示 QR Code';
     }
-  }, 1000);
 }
 
-// Show info modal
-function showInfoModal() {
-  const modal = document.getElementById('infoModal');
-  const closeBtn = modal.querySelector('.close');
-  modal.style.display = 'flex';
-
-  closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-
-  window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
+function toggleDarkMode() {
+    const body = document.body;
+    const isDarkMode = body.classList.toggle('dark-mode');
+    
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
 }
 
-// Disable specific shortcut keys and detect developer tools
-document.addEventListener('keydown', (e) => {
-  if (
-    e.ctrlKey &&
-    (e.key === 'c' || e.key === 'C' || e.key === 'a' || e.key === 'A' || e.key === 'x' || e.key === 'X')
-  ) {
-    e.preventDefault();
-  }
-});
-
-// Check for developer tools open and refresh page if detected
-setInterval(() => {
-  const devToolsOpened = () => {
-    const threshold = 160;
-    return window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold;
-  };
-  if (devToolsOpened()) {
-    document.body.innerHTML = '<h1>請勿使用開發者工具！</h1>';
-    window.location.reload();
-  }
-}, 1000);
-
-// Initialize events on DOM content loaded
 document.addEventListener('DOMContentLoaded', () => {
-  initializeMenu();
-  document.getElementById('invitationForm').addEventListener('submit', handleFormSubmit);
-  document.getElementById('currentYear').textContent = new Date().getFullYear();
+    // Initial update
+    updateCountdownAndCode();
+    
+    // Update every second
+    setInterval(updateCountdownAndCode, 1000);
+    
+    // Add copy button functionality
+    const copyBtn = document.getElementById('copy-code-btn');
+    copyBtn.addEventListener('click', copyInvitationCode);
+    
+    // Add QR code toggle functionality
+    const showQRBtn = document.getElementById('show-qr-btn');
+    showQRBtn.addEventListener('click', toggleQRCode);
+
+    // Dark mode toggle button
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', toggleDarkMode);
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+
+    // Prevent double-tap zoom on mobile
+    const preventZoom = (e) => {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    };
+
+    document.addEventListener('touchstart', preventZoom, { passive: false });
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+
+    // Optional: Disable zooming
+    const metaViewport = document.querySelector('meta[name="viewport"]');
+    if (metaViewport) {
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+
+    // Side Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeMenu = document.getElementById('close-menu');
+    const sideMenu = document.getElementById('side-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+
+    menuToggle.addEventListener('click', () => {
+        sideMenu.classList.add('open');
+        menuOverlay.classList.add('open');
+    });
+
+    closeMenu.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    });
+
+    menuOverlay.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    });
+
+    // Instructions Modal
+    const instructionsModal = document.getElementById('instructions-modal');
+    const instructionsLink = document.getElementById('instructions-link');
+    const closeModal = document.querySelector('.close-modal');
+
+    instructionsLink.addEventListener('click', () => {
+        instructionsModal.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+        instructionsModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === instructionsModal) {
+            instructionsModal.style.display = 'none';
+        }
+    });
+
+    // Prevent page copying and screenshots
+    const preventCopy = (e) => {
+        e.preventDefault();
+    };
+
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', preventCopy);
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
+    document.body.style.mozUserSelect = 'none';
+    document.body.style.msUserSelect = 'none';
+
+    // Disable copying
+    document.addEventListener('copy', preventCopy);
+    document.addEventListener('cut', preventCopy);
+
+    // Detect DevTools opening
+    const checkDevTools = () => {
+        const threshold = 160;
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        
+        if (widthThreshold || heightThreshold) {
+            console.clear();
+            // Optional: Take additional actions if DevTools are detected
+        }
+    };
+
+    window.addEventListener('resize', checkDevTools);
+
+    // Back to Landing Page Button
+    const backToLandingBtn = document.getElementById('back-to-landing');
+    backToLandingBtn.addEventListener('click', () => {
+        // Replace with the actual URL of your landing page
+        window.location.href = 'landing.html';
+    });
 });
