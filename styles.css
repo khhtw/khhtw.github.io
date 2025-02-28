@@ -232,77 +232,59 @@ button:hover {
 .fullscreen-menu {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: 300px;
   height: 100%;
-  background-color: var(--menu-background);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: -4px 0 30px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  transform: translateX(100%);
+  transition: transform 0.4s ease, opacity 0.4s ease;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .fullscreen-menu.show {
+  transform: translateX(0);
   opacity: 1;
-  visibility: visible;
-}
-
-.fullscreen-menu a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.5em;
-  margin: 20px 0;
-  transition: all 0.5s ease;
-  position: relative;
-  padding: 10px 0;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.fullscreen-menu.show a {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.fullscreen-menu a::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: var(--accent-color);
-  visibility: hidden;
-  transform: scaleX(0);
-  transition: all 0.3s ease-in-out;
-}
-
-.fullscreen-menu a:hover::after {
-  visibility: visible;
-  transform: scaleX(1);
-}
-
-.fullscreen-menu a:hover {
-  color: var(--accent-color);
 }
 
 .close-menu {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 2em;
-  color: white;
+  top: 15px;
+  right: 15px;
+  font-size: 1.8em;
+  color: var(--text-color);
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .close-menu:hover {
-  color: var(--accent-color);
-  transform: rotate(90deg);
+  transform: scale(1.2);
+  color: var(--primary-color);
+}
+
+.fullscreen-menu a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.2em;
+  width: 80%;
+  text-align: center;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.fullscreen-menu a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
 }
 
 .qr-options {
@@ -419,11 +401,6 @@ button:hover {
   animation: slideIn 0.5s ease-out;
   animation-fill-mode: backwards;
 }
-
-.fullscreen-menu a:nth-child(1) { animation-delay: 0.1s; }
-.fullscreen-menu a:nth-child(2) { animation-delay: 0.2s; }
-.fullscreen-menu a:nth-child(3) { animation-delay: 0.3s; }
-.fullscreen-menu a:nth-child(4) { animation-delay: 0.4s; }
 
 /* Modal styles */
 .modal {
@@ -557,7 +534,7 @@ body.dark-mode .dark-mode-toggle:hover {
 body.dark-mode .modal-content {
   background-color: #2c3e50;
   color: #ecf0f1;
-  border-color: #34495e;
+  border-color: #888;
 }
 
 body.dark-mode .close {
@@ -567,6 +544,8 @@ body.dark-mode .close {
 body.dark-mode .close:hover,
 body.dark-mode .close:focus {
   color: #bdc3c7;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 body.dark-mode .confirm-button {
@@ -1169,9 +1148,7 @@ button:disabled {
 }
 
 /* Statistics Chart Styles */
-#statistics {
-  margin-top: 20px;
-}
+/* Removed */
 
 /* Mobile adjustments for very small screens */
 @media (max-width: 480px) {
@@ -1182,7 +1159,81 @@ button:disabled {
     margin: 20px auto;
   }
   #qr-reader {
-    width: 100%;
-    box-sizing: border-box;
+    width: 100% !important;
   }
+}
+
+/* Analysis Results Aesthetics Enhancements */
+.results-card {
+  background-color: var(--card-background);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  margin-top: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.results-card h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+.results-summary {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.results-summary .result-item {
+  flex: 1;
+  min-width: 150px;
+  margin: 10px;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.results-card h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.results-card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.results-card li {
+  background: #f9f9f9;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  color: var(--text-color);
+}
+
+.results-chart {
+  margin-top: 15px;
+}
+
+/* Additional styles for detailed analysis result */
+.result-details {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 2px solid var(--shadow-color);
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.result-details ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.result-details li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-color);
 }

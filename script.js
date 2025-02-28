@@ -305,16 +305,15 @@ async function analyzeScores() {
 
 function displayResults(data) {
   const { totalPoints, totalCredits, eligibleSchools } = data;
-
-  let results = `<h2><i class="fas fa-clipboard-check icon"></i>分析結果</h2>
-                 <p class="result-item"><i class="fas fa-star icon"></i>總積分：${totalPoints}</p>
-                 <p class="result-item"><i class="fas fa-award icon"></i>總積點：${totalCredits}</p>`;
-
-  results += '<h3><i class="fas fa-list-ul icon"></i>可能錄取的學校：</h3>';
-
+  let resultsHTML = `<div class="results-card">`;
+  resultsHTML += `<h2><i class="fas fa-clipboard-check icon"></i> 分析結果</h2>`;
+  resultsHTML += `<div class="results-summary">
+                    <p class="result-item"><i class="fas fa-star icon"></i> 總積分：${totalPoints}</p>
+                    <p class="result-item"><i class="fas fa-award icon"></i> 總積點：${totalCredits}</p>
+                  </div>`;
+  resultsHTML += `<h3><i class="fas fa-list-ul icon"></i> 可能錄取的學校：</h3>`;
   if (eligibleSchools && eligibleSchools.length > 0) {
-    results += `<p class="result-item"><i class="fas fa-building icon"></i>共有 ${eligibleSchools.length} 所學校可能錄取</p>`;
-
+    resultsHTML += `<p class="result-item"><i class="fas fa-building icon"></i> 共有 ${eligibleSchools.length} 所學校可能錄取</p>`;
     let groupedSchools = {};
     eligibleSchools.forEach(school => {
       if (!groupedSchools[school.type]) {
@@ -322,75 +321,41 @@ function displayResults(data) {
       }
       groupedSchools[school.type].push(school.name);
     });
-
     Object.entries(groupedSchools).forEach(([type, schools]) => {
-      results += `<h3>${type} (${schools.length}所)</h3><ul>`;
+      resultsHTML += `<h3>${type} (${schools.length}所)</h3><ul>`;
       schools.forEach(schoolName => {
-        results += `<li class="result-item"><i class="fas fa-check-circle icon"></i>${schoolName}</li>`;
+        resultsHTML += `<li class="result-item"><i class="fas fa-check-circle icon"></i> ${schoolName}</li>`;
       });
-      results += '</ul>';
+      resultsHTML += `</ul>`;
     });
-    results += '<h3>統計</h3><div id="statistics"></div>';
   } else {
-    results += '<p class="result-item"><i class="fas fa-exclamation-triangle icon"></i>根據您的成績，暫時沒有符合條件的學校。</p>';
+    resultsHTML += `<p class="result-item"><i class="fas fa-exclamation-triangle icon"></i> 根據您的成績，暫時沒有符合條件的學校。</p>`;
   }
-
+  let details = `<div class="result-details">
+                    <h3><i class="fas fa-info-circle icon"></i> 分析詳細資料</h3>
+                    <ul>
+                      <li>國文：${document.getElementById('chinese').value}</li>
+                      <li>英文：${document.getElementById('english').value}</li>
+                      <li>數學：${document.getElementById('math').value}</li>
+                      <li>自然：${document.getElementById('science').value}</li>
+                      <li>社會：${document.getElementById('social').value}</li>
+                      <li>作文：${document.getElementById('composition').value} 級分</li>
+                      <li>學校屬性：${document.getElementById('schoolOwnership').value === 'all' ? '全部' : (document.getElementById('schoolOwnership').value === 'public' ? '公立' : '私立')}</li>
+                      <li>學校類型：${document.getElementById('schoolType').value}</li>
+                      ${document.getElementById('schoolType').value === '職業類科' ? `<li>職業群別：${document.getElementById('vocationalGroup').value}</li>` : ''}
+                      <li>分析時間：${new Date().toLocaleString('zh-TW')}</li>
+                    </ul>
+                  </div>`;
+  resultsHTML += details;
+  resultsHTML += `</div>`;
   const resultsElement = document.getElementById('results');
-  resultsElement.innerHTML = results;
+  resultsElement.innerHTML = resultsHTML;
   resultsElement.style.display = 'none';
   setTimeout(() => {
     resultsElement.style.display = 'block';
     resultsElement.style.animation = 'fadeIn 0.5s ease-out';
     document.getElementById('exportResults').style.display = 'inline-block';
-
-    if (eligibleSchools && eligibleSchools.length > 0) {
-      let groupedSchools = {};
-      eligibleSchools.forEach(school => {
-        if (!groupedSchools[school.type]) {
-          groupedSchools[school.type] = [];
-        }
-        groupedSchools[school.type].push(school.name);
-      });
-      const statisticsContainer = document.getElementById('statistics');
-      if (statisticsContainer) {
-        statisticsContainer.innerHTML = generateStatisticsChart(groupedSchools);
-      }
-    }
   }, 100);
-}
-
-function generateStatisticsChart(groupedSchools) {
-  let chartData = [];
-  let maxValue = 0;
-  for (let type in groupedSchools) {
-    let count = groupedSchools[type].length;
-    chartData.push({ type: type, count: count });
-    if (count > maxValue) {
-      maxValue = count;
-    }
-  }
-  if (chartData.length === 0) {
-    return "<p>無統計數據</p>";
-  }
-  const svgWidth = 500;
-  const barHeight = 30;
-  const barGap = 10;
-  const svgHeight = chartData.length * (barHeight + barGap) + barGap;
-  let svgHtml = `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
-  let currentY = barGap;
-  chartData.forEach(item => {
-    const labelX = 10;
-    const labelY = currentY + barHeight / 2 + 5;
-    const maxBarWidth = svgWidth - 150;
-    const barWidth = (item.count / maxValue) * maxBarWidth;
-    svgHtml += `<text x="${labelX}" y="${labelY}" font-family="Arial" font-size="14" fill="#34495e">${item.type} (${item.count})</text>`;
-    svgHtml += `<rect x="150" y="${currentY}" width="${barWidth}" height="${barHeight}" fill="#2575fc">
-      <title>${item.count}</title>
-    </rect>`;
-    currentY += barHeight + barGap;
-  });
-  svgHtml += `</svg>`;
-  return svgHtml;
 }
 
 function exportResults() {
