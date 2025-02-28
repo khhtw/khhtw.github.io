@@ -1172,3 +1172,17 @@ button:disabled {
 #statistics {
   margin-top: 20px;
 }
+
+/* Mobile adjustments for very small screens */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 20px auto;
+  }
+  #qr-reader {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
