@@ -49,6 +49,18 @@ function showDisclaimer() {
   var modalContent = modal.querySelector('.modal-content');
   modal.style.display = 'block';
 
+  // Fade in and slide up animation
+  requestAnimationFrame(() => {
+    modal.style.opacity = '0';
+    modalContent.style.transform = 'translateY(50px)';
+    requestAnimationFrame(() => {
+      modal.style.transition = 'opacity 0.5s ease';
+      modal.style.opacity = '1';
+      modalContent.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      modalContent.style.transform = 'translateY(0)';
+    });
+  });
+
   // Lock body scroll when modal is open on mobile
   document.body.style.overflow = 'hidden';
   
@@ -97,9 +109,18 @@ function stopDragging() {
 
 function closeDisclaimer() {
   var modal = document.getElementById('disclaimerModal');
-  modal.style.display = 'none';
-  // Restore body scroll when modal is closed
-  document.body.style.overflow = '';
+  var modalContent = modal.querySelector('.modal-content');
+  
+  // Fade out and slide down animation
+  modalContent.style.transform = 'translateY(50px)';
+  modal.style.opacity = '0';
+  
+  setTimeout(() => {
+    modal.style.display = 'none';
+    modalContent.style.transform = 'translateY(0)';
+    // Restore body scroll when modal is closed
+    document.body.style.overflow = '';
+  }, 500);
 }
 
 function showInvitationValidationAnimation() {
