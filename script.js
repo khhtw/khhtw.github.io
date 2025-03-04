@@ -70,41 +70,18 @@ function showDisclaimer() {
   } else {
     modalContent.classList.remove('mobile-view');
   }
-  
-  modalContent.addEventListener('mousedown', startDragging);
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', stopDragging);
-
-  modalContent.addEventListener('touchstart', startDragging, { passive: false });
-  document.addEventListener('touchmove', drag, { passive: false });
-  document.addEventListener('touchend', stopDragging);
 }
 
 function startDragging(e) {
-  isDragging = true;
-  startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-  startTop = parseInt(window.getComputedStyle(this).top) || 0;
-  this.style.cursor = 'grabbing';
-  
-  // Prevent page scrolling while dragging on mobile
-  if (e.type === 'touchstart') {
-    e.preventDefault();
-  }
+  return false;
 }
 
 function drag(e) {
-  if (!isDragging) return;
-  e.preventDefault();
-  let modalContent = document.querySelector('.modal-content');
-  let currentY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-  let deltaY = currentY - startY;
-  modalContent.style.top = `${startTop + deltaY}px`;
+  return false;
 }
 
 function stopDragging() {
-  isDragging = false;
-  const modalContent = document.querySelector('.modal-content');
-  if (modalContent) modalContent.style.cursor = 'grab';
+  return false;
 }
 
 function closeDisclaimer() {

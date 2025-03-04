@@ -721,6 +721,7 @@ body.dark-mode .dark-mode-toggle:hover {
   transform: translateY(0);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
+  cursor: default;
 }
 
 body.dark-mode #disclaimerModal .modal-content {
