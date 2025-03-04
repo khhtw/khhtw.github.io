@@ -854,6 +854,7 @@ function convertToHTML(content) {
 window.onload = function() {
   showDisclaimer();
   initMobileOptimizations();
+  initUserIdentitySelection();
 };
 
 document.oncontextmenu = function () {
@@ -1049,4 +1050,52 @@ function initMobileOptimizations() {
       document.documentElement.style.setProperty('--real-height', `${window.innerHeight}px`);
     });
   }
+}
+
+// Initialize user identity selection when page loads
+function initUserIdentitySelection() {
+  const identityContainer = document.getElementById('userIdentityContainer');
+  const identityOptions = [
+    { value: 'student', icon: 'fa-user-graduate', label: '學生' },
+    { value: 'parent', icon: 'fa-user-friends', label: '家長' },
+    { value: 'teacher', icon: 'fa-chalkboard-teacher', label: '教師' },
+    { value: 'counselor', icon: 'fa-hands-helping', label: '輔導人員' },
+    { value: 'other', icon: 'fa-user', label: '其他' }
+  ];
+  
+  // Clear existing content
+  identityContainer.innerHTML = '';
+  
+  // Create identity options
+  identityOptions.forEach(option => {
+    const identityOption = document.createElement('div');
+    identityOption.className = 'identity-option';
+    identityOption.dataset.value = option.value;
+    identityOption.innerHTML = `
+      <i class="fas ${option.icon}"></i>
+      <span>${option.label}</span>
+    `;
+    
+    identityOption.addEventListener('click', function() {
+      // Remove active class from all options
+      document.querySelectorAll('.identity-option').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Add active class to selected option
+      this.classList.add('active');
+      
+      // Update hidden input
+      document.getElementById('userIdentity').value = this.dataset.value;
+      
+      // Log selection
+      logUserActivity('identity_selected', { identity: this.dataset.value });
+    });
+    
+    identityContainer.appendChild(identityOption);
+  });
+  
+  // Set default selection (first option)
+  document.querySelector('.identity-option').classList.add('active');
+  document.getElementById('userIdentity').value = identityOptions[0].value;
 }
