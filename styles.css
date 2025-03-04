@@ -156,6 +156,34 @@ body.dark-mode input[type="text"]:focus {
   box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.3);
 }
 
+#userIdentity {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+body.dark-mode #userIdentity {
+  background-color: var(--dark-input-background);
+  color: var(--dark-text-color);
+  border: 2px solid var(--dark-border-color);
+}
+
+#userIdentity:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+  background-color: #fff;
+}
+
+body.dark-mode #userIdentity:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.3);
+}
+
 /* Button styles with gradient backgrounds */
 button {
   background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
@@ -966,6 +994,12 @@ body.dark-mode #disclaimerModal .close:hover {
   #disclaimerModal .confirm-button {
     padding: 12px 20px;
     font-size: 1rem;
+  }
+  
+  #disclaimerModal .close {
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
   }
 }
 

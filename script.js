@@ -256,6 +256,7 @@ async function analyzeScores() {
       return;
     }
 
+    const userIdentity = document.getElementById('userIdentity').value;
     const schoolOwnership = document.getElementById('schoolOwnership').value;
     const schoolType = document.getElementById('schoolType').value;
     const vocationalGroup = document.getElementById('vocationalGroup').value;
@@ -292,6 +293,7 @@ async function analyzeScores() {
     showLoading();
 
     await logUserActivity('analyze_scores', {
+      userIdentity,
       scores: {
         chinese: document.getElementById('chinese').value,
         english: document.getElementById('english').value,
@@ -377,6 +379,7 @@ function displayResults(data) {
   let details = `<div class="result-details">
                     <h3><i class="fas fa-info-circle icon"></i> 分析詳細資料</h3>
                     <ul>
+                      <li>分析者身份：${document.getElementById('userIdentity').options[document.getElementById('userIdentity').selectedIndex].text}</li>
                       <li>國文：${document.getElementById('chinese').value}</li>
                       <li>英文：${document.getElementById('english').value}</li>
                       <li>數學：${document.getElementById('math').value}</li>
