@@ -921,14 +921,13 @@ body.dark-mode #disclaimerModal .close:hover {
   }
 }
 
-/* ... existing code ... */
-
-/* Mobile Responsive Styles */
+/* Enhanced Mobile Responsive Styles */
 @media (max-width: 768px) {
   .container {
     width: 95%;
     padding: 1.5rem;
     margin: 60px auto 20px;
+    border-radius: 15px;
   }
 
   h1 {
@@ -937,10 +936,12 @@ body.dark-mode #disclaimerModal .close:hover {
 
   h2 {
     font-size: 1.5rem;
+    margin-top: 1.5rem;
   }
 
   h3 {
     font-size: 1.3rem;
+    margin-top: 1rem;
   }
 
   .form-group {
@@ -948,20 +949,25 @@ body.dark-mode #disclaimerModal .close:hover {
   }
 
   select, input[type="text"] {
-    padding: 0.5rem;
-    font-size: 0.9rem;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 6px;
   }
 
   button {
     width: 100%;
     padding: 0.8rem 1.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    border-radius: 25px;
+    font-size: 1rem;
   }
 
-  .instruction-toggle,
-  .disclaimer-toggle {
+  .invite-link {
+    padding: 12px 20px;
+    font-size: 0.9rem;
     width: 100%;
-    margin-bottom: 0.5rem;
+    text-align: center;
+    box-sizing: border-box;
   }
 
   .qr-options {
@@ -973,258 +979,161 @@ body.dark-mode #disclaimerModal .close:hover {
   #scanQRCode {
     width: 100%;
     min-width: unset;
+    height: auto;
+    padding: 12px;
   }
 
   #qr-reader {
     width: 100% !important;
+    max-height: 50vh;
   }
 
-  .header-container {
-    padding: 0 15px;
-  }
-
-  .header-logo {
-    font-size: 1.2em;
-  }
-
-  .header-logo i {
-    margin-right: 5px;
-  }
-
-  .modal-content {
-    width: 90%;
-    margin: 10% auto;
+  /* Results card mobile optimization */
+  .results-card {
     padding: 15px;
+    border-radius: 12px;
   }
 
-  #disclaimerModal .modal-content {
-    width: 85%;
-    max-height: 80vh;
-    margin: 10% auto;
-    padding: 1.2rem;
-    overflow-y: auto;
-    font-size: 0.9rem;
-  }
-
-  #disclaimerModal h2 {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.8rem;
-  }
-
-  #disclaimerModal a {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  #disclaimerModal p {
-    font-size: 0.85rem;
-    margin-bottom: 0.8rem;
-  }
-
-  #disclaimerModal ul {
-    margin-bottom: 0.8rem;
-  }
-
-  #disclaimerModal li {
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
-    padding-left: 1.5rem;
-  }
-
-  #disclaimerModal .icon {
-    font-size: 1rem;
-  }
-
-  #disclaimerModal .confirm-button {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-    margin-top: 1rem;
-  }
-
-  #disclaimerModal .close {
-    font-size: 1.2rem;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.3rem;
-    width: 1.8rem;
-    height: 1.8rem;
-    line-height: 1.8rem;
-  }
-
-  .loading-spinner {
-    width: 100px;
-    height: 100px;
-  }
-
-  .spinner {
-    width: 30px;
-    height: 30px;
-  }
-
-  .loading-text {
-    font-size: 12px;
-  }
-
-  .result-item {
-    padding: 0.8rem;
-    margin-bottom: 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .dark-mode-toggle {
-    width: 45px;
-    height: 45px;
-    font-size: 1.2em;
-    bottom: 15px;
-    right: 15px;
-  }
-
-  .copyright {
-    font-size: 0.8rem;
-    padding: 0.8rem;
-  }
-
-  .fullscreen-menu a {
-    font-size: 1.3em;
-    margin: 15px 0;
-  }
-
-  .close-menu {
-    top: 15px;
-    right: 15px;
-    font-size: 1.5em;
-  }
-}
-
-@media (max-width: 320px) {
-  .container {
-    padding: 1rem;
-  }
-
-  h1 {
+  .results-card h2 {
     font-size: 1.5rem;
   }
 
-  .form-group label {
-    font-size: 0.85rem;
+  .results-summary {
+    flex-direction: column;
   }
 
-  select,
-  input[type="text"] {
-    font-size: 0.85rem;
+  .results-summary .result-item {
+    margin: 5px 0;
+    font-size: 1rem;
   }
 
-  #disclaimerModal .modal-content {
-    width: 90%;
-    padding: 1rem;
-    margin: 5% auto;
+  /* Export format dialog mobile optimization */
+  .export-format-options button {
+    padding: 10px;
+    font-size: 0.9rem;
   }
 
-  #disclaimerModal h2 {
+  .export-format-options button i {
     font-size: 1.1rem;
   }
 
-  #disclaimerModal p,
+  /* Fix modal content for better mobile viewing */
+  #disclaimerModal .modal-content {
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+    margin: 10% auto;
+    border-radius: 15px;
+  }
+  
+  #disclaimerModal h2 {
+    font-size: 1.4rem;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  
+  #disclaimerModal a {
+    padding: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+  
+  #disclaimerModal p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+  
+  #disclaimerModal li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    padding-left: 30px;
+  }
+  
+  #disclaimerModal li:before {
+    font-size: 18px;
+  }
+  
+  #disclaimerModal .confirm-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  
+  #disclaimerModal .close {
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+  }
+}
+
+/* Additional optimization for extra small screens */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 20px auto;
+  }
+  #qr-reader {
+    width: 100% !important;
+  }
+  
+  #disclaimerModal .modal-content {
+    width: 95%;
+    padding: 1rem;
+    margin: 5% auto;
+    max-height: 85vh;
+  }
+  
+  #disclaimerModal h2 {
+    font-size: 1.2rem;
+    text-align: left;
+    display: block;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  #disclaimerModal h2 .icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  #disclaimerModal a {
+    padding: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+  
+  #disclaimerModal p {
+    font-size: 0.85rem;
+    text-align: left;
+    display: block;
+  }
+  
+  #disclaimerModal p .icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 0.85rem;
+  }
+  
   #disclaimerModal li {
     font-size: 0.8rem;
+    padding-left: 25px;
+    margin-bottom: 8px;
   }
-
+  
   #disclaimerModal .confirm-button {
-    font-size: 0.85rem;
-    padding: 0.7rem;
-  }
-
-  #disclaimerModal .close {
-    font-size: 20px;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
+    padding: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0;
   }
 }
-
-@media (hover: none) and (pointer: coarse) {
-  button,
-  select,
-  input[type="text"],
-  .instruction-toggle,
-  .disclaimer-toggle,
-  .file-input-label,
-  #scanQRCode {
-    min-height: 44px;
-    touch-action: manipulation;
-  }
-
-  .form-group {
-    margin-bottom: 16px;
-  }
-}
-
-/* Disabled button style */
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Rating Section Styles */
-#ratingSection {
-  margin-top: 20px;
-  padding: 20px;
-  background: var(--card-background);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px var(--shadow-color);
-  animation: fadeIn 0.5s ease-out;
-  text-align: center;
-}
-
-#ratingSection h2 {
-  margin-bottom: 15px;
-}
-
-#starsContainer {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-}
-
-#starsContainer .star {
-  cursor: pointer;
-  color: #bdc3c7;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-#starsContainer .star.active {
-  color: #f1c40f;
-  transform: scale(1.2);
-}
-
-#submitRating.rating-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.1rem;
-  border-radius: 30px;
-  background-color: var(--secondary-color);
-  border: none;
-  cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  box-shadow: 0 4px 6px var(--shadow-color);
-}
-
-#submitRating.rating-button:hover {
-  background-color: #5a0cb3;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 8px var(--shadow-color);
-}
-
-/* Statistics Chart Styles */
-/* Removed */
 
 /* Mobile adjustments for very small screens */
 @media (max-width: 480px) {
   .container {
-    width: 100%;
+    width: 100% !important;
     padding-left: 10px;
     padding-right: 10px;
     margin: 20px auto;
@@ -1369,4 +1278,61 @@ body.dark-mode .export-format-options button:hover {
   .export-format-options button i {
     font-size: 1.2rem;
   }
+}
+
+/* Disabled button style */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Rating Section Styles */
+#ratingSection {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  animation: fadeIn 0.5s ease-out;
+  text-align: center;
+}
+
+#ratingSection h2 {
+  margin-bottom: 15px;
+}
+
+#starsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+#starsContainer .star {
+  cursor: pointer;
+  color: #bdc3c7;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+#starsContainer .star.active {
+  color: #f1c40f;
+  transform: scale(1.2);
+}
+
+#submitRating.rating-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  background-color: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+#submitRating.rating-button:hover {
+  background-color: #5a0cb3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px var(--shadow-color);
 }

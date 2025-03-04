@@ -49,12 +49,22 @@ function showDisclaimer() {
   var modalContent = modal.querySelector('.modal-content');
   modal.style.display = 'block';
 
+  // Lock body scroll when modal is open on mobile
+  document.body.style.overflow = 'hidden';
+  
+  // Add class for mobile detection
+  if (window.innerWidth <= 768) {
+    modalContent.classList.add('mobile-view');
+  } else {
+    modalContent.classList.remove('mobile-view');
+  }
+  
   modalContent.addEventListener('mousedown', startDragging);
   document.addEventListener('mousemove', drag);
   document.addEventListener('mouseup', stopDragging);
 
-  modalContent.addEventListener('touchstart', startDragging);
-  document.addEventListener('touchmove', drag);
+  modalContent.addEventListener('touchstart', startDragging, { passive: false });
+  document.addEventListener('touchmove', drag, { passive: false });
   document.addEventListener('touchend', stopDragging);
 }
 
@@ -63,6 +73,11 @@ function startDragging(e) {
   startY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
   startTop = parseInt(window.getComputedStyle(this).top) || 0;
   this.style.cursor = 'grabbing';
+  
+  // Prevent page scrolling while dragging on mobile
+  if (e.type === 'touchstart') {
+    e.preventDefault();
+  }
 }
 
 function drag(e) {
@@ -83,6 +98,8 @@ function stopDragging() {
 function closeDisclaimer() {
   var modal = document.getElementById('disclaimerModal');
   modal.style.display = 'none';
+  // Restore body scroll when modal is closed
+  document.body.style.overflow = '';
 }
 
 function showInvitationValidationAnimation() {
@@ -835,6 +852,7 @@ function convertToHTML(content) {
 
 window.onload = function() {
   showDisclaimer();
+  initMobileOptimizations();
 };
 
 document.oncontextmenu = function () {
@@ -998,3 +1016,31 @@ function updateStarDisplay(rating) {
 }
 
 document.addEventListener("DOMContentLoaded", initRating);
+
+// Enhance mobile interface initialization
+function initMobileOptimizations() {
+  // Detect if the device is mobile and adjust for better interaction
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    // Improve QR reader experience on mobile
+    qrConfig.qrbox = { width: 200, height: 200 };
+    
+    // Adjust button behavior for mobile touch
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      button.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+      });
+      button.addEventListener('touchend', function() {
+        this.style.transform = '';
+      });
+    });
+    
+    // Fix iOS 100vh issue
+    document.documentElement.style.setProperty('--real-height', `${window.innerHeight}px`);
+    window.addEventListener('resize', () => {
+      document.documentElement.style.setProperty('--real-height', `${window.innerHeight}px`);
+    });
+  }
+}
