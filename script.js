@@ -441,6 +441,7 @@ function showExportFormatDialog(content) {
   modal.className = 'modal';
   modal.id = 'exportFormatModal';
   modal.style.display = 'block';
+  modal.style.opacity = '0';
   
   modal.innerHTML = `
     <div class="modal-content export-format-modal">
@@ -448,25 +449,393 @@ function showExportFormatDialog(content) {
       <h2><i class="fas fa-file-export icon"></i> 選擇匯出格式</h2>
       <div class="export-format-options">
         <button onclick="exportAsFormat('txt', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-alt icon"></i> 純文字檔 (.txt)
+          <i class="fas fa-file-alt icon"></i> 
+          <div>
+            <div>純文字檔 (.txt)</div>
+            <span class="format-description">基本文字格式，適合所有設備開啟</span>
+          </div>
         </button>
         <button onclick="exportAsFormat('csv', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-csv icon"></i> CSV 檔案 (.csv)
+          <i class="fas fa-file-csv icon"></i>
+          <div>
+            <div>CSV 檔案 (.csv)</div>
+            <span class="format-description">可用Excel或試算表軟體開啟，便於數據處理</span>
+          </div>
         </button>
         <button onclick="exportAsFormat('json', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-code icon"></i> JSON 檔案 (.json)
+          <i class="fas fa-file-code icon"></i>
+          <div>
+            <div>JSON 檔案 (.json)</div>
+            <span class="format-description">適合程式開發者或進階數據分析</span>
+          </div>
         </button>
         <button onclick="exportAsFormat('html', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-code icon"></i> HTML 檔案 (.html)
+          <i class="fas fa-file-code icon"></i>
+          <div>
+            <div>HTML 檔案 (.html)</div>
+            <span class="format-description">網頁格式，保留視覺效果與排版</span>
+          </div>
         </button>
         <button onclick="printResults()">
-          <i class="fas fa-print icon"></i> 列印結果
+          <i class="fas fa-print icon"></i>
+          <div>
+            <div>列印結果</div>
+            <span class="format-description">直接列印或儲存為PDF文件</span>
+          </div>
         </button>
       </div>
     </div>
   `;
   
   document.body.appendChild(modal);
+  
+  // Animate modal appearance
+  setTimeout(() => {
+    modal.style.transition = 'opacity 0.3s ease';
+    modal.style.opacity = '1';
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.transform = 'translateY(20px)';
+    modalContent.style.opacity = '0';
+    setTimeout(() => {
+      modalContent.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease';
+      modalContent.style.transform = 'translateY(0)';
+      modalContent.style.opacity = '1';
+      
+      // Add entrance animation to buttons
+      const buttons = modalContent.querySelectorAll('button');
+      buttons.forEach((button, index) => {
+        button.style.opacity = '0';
+        button.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+          button.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          button.style.opacity = '1';
+          button.style.transform = 'translateX(0)';
+        }, 100 + (index * 70));
+      });
+    }, 50);
+  }, 10);
+}
+
+function closeExportFormatDialog() {
+  const modal = document.getElementById('exportFormatModal');
+  if (modal) {
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.style.transform = 'translateY(20px)';
+    modalContent.style.opacity = '0';
+    modal.style.opacity = '0';
+    
+    setTimeout(() => {
+      modal.remove();
+    }, 300);
+  }
+}
+
+function exportAsFormat(format, contentEncoded) {
+  const content = decodeURIComponent(contentEncoded);
+  let blob, fileName;
+  
+  // Show micro animation for "processing"
+  const button = event.currentTarget;
+  const originalText = button.innerHTML;
+  button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 處理中...`;
+  
+  setTimeout(() => {
+    switch (format) {
+      case 'txt':
+        blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        fileName = '高雄區會考落點分析結果.txt';
+        break;
+      case 'csv':
+        const csvContent = convertToCSV(content);
+        blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+        fileName = '高雄區會考落點分析結果.csv';
+        break;
+      case 'json':
+        const jsonContent = convertToJSON(content);
+        blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+        fileName = '高雄區會考落點分析結果.json';
+        break;
+      case 'html':
+        const htmlContent = convertToHTML(content);
+        blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+        fileName = '高雄區會考落點分析結果.html';
+        break;
+      default:
+        blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        fileName = '高雄區會考落點分析結果.txt';
+    }
+    
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    // Reset button
+    button.innerHTML = originalText;
+    
+    // Show success message
+    const successMessage = document.createElement('div');
+    successMessage.className = 'export-success-message';
+    successMessage.innerHTML = `<i class="fas fa-check-circle"></i> 已成功匯出為${format.toUpperCase()}格式`;
+    successMessage.style.position = 'fixed';
+    successMessage.style.bottom = '20px';
+    successMessage.style.left = '50%';
+    successMessage.style.transform = 'translateX(-50%)';
+    successMessage.style.backgroundColor = '#4CAF50';
+    successMessage.style.color = 'white';
+    successMessage.style.padding = '10px 20px';
+    successMessage.style.borderRadius = '5px';
+    successMessage.style.zIndex = '9999';
+    successMessage.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    document.body.appendChild(successMessage);
+    
+    // Remove message after a delay
+    setTimeout(() => {
+      successMessage.style.opacity = '0';
+      successMessage.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => successMessage.remove(), 500);
+    }, 3000);
+    
+    logUserActivity('file_exported', { format });
+    closeExportFormatDialog();
+  }, 800); // Simulate processing time
+}
+
+function convertToCSV(content) {
+  // Basic conversion to CSV format
+  const lines = content.split('\n');
+  let csvContent = '';
+  
+  lines.forEach(line => {
+    // Replace multiple spaces with a single comma
+    const csvLine = line.trim().replace(/\s{2,}/g, ',');
+    if (csvLine) {
+      csvContent += csvLine + '\n';
+    }
+  });
+  
+  return csvContent;
+}
+
+function convertToJSON(content) {
+  const lines = content.split('\n');
+  const result = {
+    title: '高雄區會考落點分析結果',
+    generatedTime: new Date().toISOString(),
+    summary: {},
+    schools: []
+  };
+  
+  let currentSection = '';
+  
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line) return;
+    
+    if (line.includes('總積分：')) {
+      result.summary.totalPoints = line.split('：')[1].trim();
+    } else if (line.includes('總積點：')) {
+      result.summary.totalCredits = line.split('：')[1].trim();
+    } else if (line.includes('可能錄取的學校')) {
+      currentSection = 'schools';
+    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
+      // School type header
+      currentSection = line.split('(')[0].trim();
+      result.schools.push({
+        type: currentSection,
+        names: []
+      });
+    } else if (currentSection && line.includes('icon')) {
+      // This is a school name
+      const schoolIndex = result.schools.findIndex(s => s.type === currentSection);
+      if (schoolIndex !== -1) {
+        const schoolName = line.replace(/.*icon\)/, '').trim();
+        result.schools[schoolIndex].names.push(schoolName);
+      }
+    }
+  });
+  
+  return JSON.stringify(result, null, 2);
+}
+
+function convertToHTML(content) {
+  const lines = content.split('\n');
+  let html = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高雄區會考落點分析結果</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2575fc;
+      position: relative;
+    }
+    .header:after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+    }
+    h1 {
+      color: #2575fc;
+      margin: 0 0 10px 0;
+    }
+    .timestamp {
+      color: #666;
+      font-style: italic;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      color: #2575fc;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .summary-item {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 10px 0;
+      padding: 10px;
+      background: #f0f7ff;
+      border-radius: 5px;
+      border-left: 4px solid #2575fc;
+    }
+    .school-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .school-item {
+      background: #f9f9f9;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .school-item:hover {
+      transform: translateX(5px);
+      background: #f0f7ff;
+    }
+    .school-type {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+      background: #e9ecef;
+      padding: 8px 15px;
+      border-radius: 5px;
+    }
+    .disclaimer {
+      font-size: 0.9em;
+      color: #666;
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .badge {
+      display: inline-block;
+      background: #2575fc;
+      color: white;
+      border-radius: 50px;
+      padding: 2px 10px;
+      font-size: 0.8em;
+      margin-left: 10px;
+    }
+    @media print {
+      body {
+        background: none;
+      }
+      .container {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-chart-line"></i> 高雄區會考落點分析結果</h1>
+      <div class="timestamp">產生時間: ${new Date().toLocaleString('zh-TW')}</div>
+    </div>
+    <div class="content">`;
+
+  let inSchoolsList = false;
+  let currentSchoolType = '';
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line) return;
+    
+    if (line.includes('總積分') || line.includes('總積點')) {
+      html += `<div class="summary-item"><i class="fas fa-star"></i> ${line}</div>`;
+    } else if (line.includes('可能錄取的學校')) {
+      html += `<div class="section">
+        <h2 class="section-title"><i class="fas fa-list-ul"></i> ${line}</h2>`;
+      inSchoolsList = true;
+    } else if (line.includes('所學校可能錄取')) {
+      html += `<div class="summary-item"><i class="fas fa-building"></i> ${line}</div>`;
+    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
+      const matches = line.match(/^(\w+)\s*\((\d+)所\)$/);
+      if (matches && matches.length >= 3) {
+        const type = matches[1];
+        const count = matches[2];
+        currentSchoolType = type;
+        html += `<div class="school-type"><i class="fas fa-graduation-cap"></i> ${type} <span class="badge">${count}所</span></div>
+        <ul class="school-list">`;
+      } else {
+        currentSchoolType = line;
+        html += `<div class="school-type">${line}</div>
+          <ul class="school-list">`;
+      }
+    } else if (inSchoolsList && line.includes('icon')) {
+      const schoolName = line.replace(/.*icon\)/, '').trim();
+      html += `<li class="school-item"><i class="fas fa-check-circle" style="color: #2575fc; margin-right: 8px;"></i>${schoolName}</li>`;
+    } else if (line.includes('暫時沒有符合條件的學校')) {
+      html += `<div class="summary-item"><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> ${line}</div>`;
+    }
+  });
+
+  html += `</ul>
+    </div>
+    <div class="disclaimer">
+      <p><strong>重要提醒：</strong>本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同。</p>
+      <p> ${new Date().getFullYear()} KHTW 高雄區會考落點分析系統</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  return html;
 }
 
 function printResults() {
@@ -581,7 +950,7 @@ function printResults() {
     <body>
       <div class="print-container">
         <div class="print-header">
-          <h1><i class="fas fa-chart-line icon"></i>高雄區會考落點分析結果</h1>
+          <h1><i class="fas fa-chart-line"></i>高雄區會考落點分析結果</h1>
           <div class="print-timestamp">產生時間: ${dateTime}</div>
         </div>
         
@@ -613,242 +982,6 @@ function printResults() {
   printWindow.document.open();
   printWindow.document.write(printContent);
   printWindow.document.close();
-}
-
-function closeExportFormatDialog() {
-  const modal = document.getElementById('exportFormatModal');
-  if (modal) {
-    modal.style.display = 'none';
-    setTimeout(() => {
-      modal.remove();
-    }, 300);
-  }
-}
-
-function exportAsFormat(format, contentEncoded) {
-  const content = decodeURIComponent(contentEncoded);
-  let blob, fileName;
-  
-  switch (format) {
-    case 'txt':
-      blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      fileName = '高雄區會考落點分析結果.txt';
-      break;
-    case 'csv':
-      const csvContent = convertToCSV(content);
-      blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-      fileName = '高雄區會考落點分析結果.csv';
-      break;
-    case 'json':
-      const jsonContent = convertToJSON(content);
-      blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
-      fileName = '高雄區會考落點分析結果.json';
-      break;
-    case 'html':
-      const htmlContent = convertToHTML(content);
-      blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-      fileName = '高雄區會考落點分析結果.html';
-      break;
-    default:
-      blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-      fileName = '高雄區會考落點分析結果.txt';
-  }
-  
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  URL.revokeObjectURL(url);
-  
-  logUserActivity('file_exported', { format });
-  closeExportFormatDialog();
-}
-
-function convertToCSV(content) {
-  // Basic conversion to CSV format
-  const lines = content.split('\n');
-  let csvContent = '';
-  
-  lines.forEach(line => {
-    // Replace multiple spaces with a single comma
-    const csvLine = line.trim().replace(/\s{2,}/g, ',');
-    if (csvLine) {
-      csvContent += csvLine + '\n';
-    }
-  });
-  
-  return csvContent;
-}
-
-function convertToJSON(content) {
-  const lines = content.split('\n');
-  const result = {
-    title: '高雄區會考落點分析結果',
-    generatedTime: new Date().toISOString(),
-    summary: {},
-    schools: []
-  };
-  
-  let currentSection = '';
-  
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) return;
-    
-    if (line.includes('總積分：')) {
-      result.summary.totalPoints = line.split('：')[1].trim();
-    } else if (line.includes('總積點：')) {
-      result.summary.totalCredits = line.split('：')[1].trim();
-    } else if (line.includes('可能錄取的學校')) {
-      currentSection = 'schools';
-    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
-      // School type header
-      currentSection = line.split('(')[0].trim();
-      result.schools.push({
-        type: currentSection,
-        names: []
-      });
-    } else if (line.startsWith('共有') && line.includes('所學校')) {
-      result.summary.totalSchools = line.match(/\d+/)[0];
-    } else if (currentSection && line.includes('icon')) {
-      // This is a school name
-      const schoolIndex = result.schools.findIndex(s => s.type === currentSection);
-      if (schoolIndex !== -1) {
-        const schoolName = line.replace(/.*icon\)/, '').trim();
-        result.schools[schoolIndex].names.push(schoolName);
-      }
-    }
-  });
-  
-  return JSON.stringify(result, null, 2);
-}
-
-function convertToHTML(content) {
-  const lines = content.split('\n');
-  let html = `<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>高雄區會考落點分析結果</title>
-  <style>
-    body {
-      font-family: 'Noto Sans TC', sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-      background-color: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #2575fc;
-    }
-    h1 {
-      color: #2575fc;
-      margin: 0 0 10px 0;
-    }
-    .timestamp {
-      color: #666;
-      font-style: italic;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section-title {
-      color: #2575fc;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
-    }
-    .summary-item {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-    .school-list {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    .school-item {
-      background: #f9f9f9;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .school-type {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #333;
-    }
-    .disclaimer {
-      font-size: 0.9em;
-      color: #666;
-      text-align: center;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>高雄區會考落點分析結果</h1>
-      <div class="timestamp">產生時間: ${new Date().toLocaleString('zh-TW')}</div>
-    </div>
-    <div class="content">`;
-
-  let inSchoolsList = false;
-  let currentSchoolType = '';
-
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) return;
-    
-    if (line.includes('總積分') || line.includes('總積點')) {
-      html += `<div class="summary-item">${line}</div>`;
-    } else if (line.includes('可能錄取的學校')) {
-      html += `<div class="section">
-        <h2 class="section-title">${line}</h2>`;
-      inSchoolsList = true;
-    } else if (line.includes('所學校可能錄取')) {
-      html += `<div class="summary-item">${line}</div>`;
-    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
-      currentSchoolType = line;
-      html += `<div class="school-type">${line}</div>
-        <ul class="school-list">`;
-    } else if (inSchoolsList && line.includes('icon')) {
-      const schoolName = line.replace(/.*icon\)/, '').trim();
-      html += `<li class="school-item">${schoolName}</li>`;
-    } else if (line.includes('暫時沒有符合條件的學校')) {
-      html += `<div class="summary-item">${line}</div>`;
-    }
-  });
-
-  html += `</ul>
-    </div>
-    <div class="disclaimer">
-      本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同。<br>
-      ${new Date().getFullYear()} KHTW 高雄區會考落點分析系統
-    </div>
-  </div>
-</body>
-</html>`;
-
-  return html;
 }
 
 window.onload = function() {
@@ -980,17 +1113,38 @@ document.getElementById('currentYear').textContent = new Date().getFullYear();
 
 let userRating = 0;
 
-function initRating() {
+document.addEventListener("DOMContentLoaded", function() {
+  // Initialize rating stars with animation
   const stars = document.querySelectorAll("#starsContainer .star");
+  
+  // Animate stars appearance on load
+  stars.forEach((star, index) => {
+    star.style.opacity = "0";
+    star.style.transform = "translateY(20px)";
+    setTimeout(() => {
+      star.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+      star.style.opacity = "1";
+      star.style.transform = "translateY(0)";
+    }, 100 + (index * 150));
+  });
+  
   stars.forEach(star => {
     star.addEventListener("click", function() {
       userRating = Number(this.getAttribute("data-value"));
       updateStarDisplay(userRating);
+      
+      // Add click animation
+      this.style.transform = "scale(0.8)";
+      setTimeout(() => {
+        this.style.transform = "scale(1.3)";
+      }, 150);
     });
+    
     star.addEventListener("mouseover", function() {
       const rating = Number(this.getAttribute("data-value"));
       updateStarDisplay(rating);
     });
+    
     star.addEventListener("mouseout", function() {
       updateStarDisplay(userRating);
     });
@@ -1002,13 +1156,28 @@ function initRating() {
       alert("請選擇評分星數！");
       return;
     }
+    
+    // Button submit animation
+    this.innerHTML = '<i class="fas fa-spinner fa-spin icon"></i> 提交中...';
     this.disabled = true;
-    logUserActivity("user_rating", { rating: userRating });
-    const ratingMsg = document.getElementById("ratingMessage");
-    ratingMsg.textContent = "感謝您的評分！";
-    ratingMsg.style.display = "block";
+    
+    setTimeout(() => {
+      logUserActivity("user_rating", { rating: userRating });
+      const ratingMsg = document.getElementById("ratingMessage");
+      ratingMsg.innerHTML = '<i class="fas fa-check-circle icon"></i> 感謝您的評分！您的回饋對我們非常重要。';
+      ratingMsg.style.display = "block";
+      
+      this.innerHTML = '<i class="fas fa-check icon"></i> 已提交';
+      
+      // Success animation for stars
+      stars.forEach(star => {
+        if (star.classList.contains("active")) {
+          star.style.animation = "starPulse 1s infinite alternate";
+        }
+      });
+    }, 1000);
   });
-}
+});
 
 function updateStarDisplay(rating) {
   const stars = document.querySelectorAll("#starsContainer .star");
@@ -1021,8 +1190,6 @@ function updateStarDisplay(rating) {
     }
   });
 }
-
-document.addEventListener("DOMContentLoaded", initRating);
 
 // Enhance mobile interface initialization
 function initMobileOptimizations() {
@@ -1065,8 +1232,7 @@ function initIdentitySelection() {
     { value: 'student', label: '學生', icon: 'fa-user-graduate' },
     { value: 'parent', label: '家長', icon: 'fa-user-friends' },
     { value: 'teacher', label: '教師', icon: 'fa-chalkboard-teacher' },
-    { value: 'counselor', label: '輔導人員', icon: 'fa-hands-helping' },
-    { value: 'other', label: '其他', icon: 'fa-user' }
+    { value: 'counselor', label: '輔導人員', icon: 'fa-hands-helping' }
   ];
   
   // Create identity option elements
