@@ -943,6 +943,11 @@ function toggleDarkMode() {
   localStorage.setItem('darkMode', isDarkMode);
   updateDarkModeIcon(isDarkMode);
 
+  document.documentElement.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+  setTimeout(() => {
+    document.documentElement.style.transition = '';
+  }, 500);
+
   logUserActivity('toggle_dark_mode', { enabled: isDarkMode });
 }
 
