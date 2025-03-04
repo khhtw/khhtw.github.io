@@ -793,18 +793,16 @@ body.dark-mode #disclaimerModal h2 {
 #disclaimerModal a {
   color: #1a5cd8;
   text-decoration: none;
-  font-size: 18px;
-  width: 100%;
-  text-align: center;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 25px;
   padding: 20px;
   background-color: #f0f2f5;
   border-radius: 15px;
   font-weight: bold;
-  transition: all 0.4s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 18px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border-left: 5px solid var(--accent-color);
 }
@@ -1668,112 +1666,5 @@ body.dark-mode #starsContainer .star.active {
   .instruction-item li {
     font-size: 0.9rem;
     padding-left: 20px;
-  }
-}
-
-/* User Identity Selection Styles */
-#userIdentityContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.identity-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  background-color: var(--card-background);
-  border: 2px solid #bdc3c7;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 10px;
-}
-
-body.dark-mode .identity-option {
-  background-color: var(--dark-highlight);
-  border-color: var(--dark-border-color);
-}
-
-.identity-option i {
-  font-size: 1.8rem;
-  color: var(--text-color);
-  margin-bottom: 8px;
-  transition: all 0.3s ease;
-}
-
-.identity-option span {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.identity-option:hover {
-  transform: translateY(-3px);
-  border-color: var(--primary-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-body.dark-mode .identity-option:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.identity-option.active {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  transform: scale(1.05);
-}
-
-.identity-option.active i,
-.identity-option.active span {
-  color: white;
-}
-
-body.dark-mode .identity-option.active {
-  background-color: var(--primary-color);
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-  #userIdentityContainer {
-    gap: 8px;
-  }
-  
-  .identity-option {
-    width: 65px;
-    height: 65px;
-    padding: 8px;
-  }
-  
-  .identity-option i {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-  }
-  
-  .identity-option span {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .identity-option {
-    width: 60px;
-    height: 60px;
-    padding: 6px;
-  }
-  
-  .identity-option i {
-    font-size: 1.3rem;
-  }
-  
-  .identity-option span {
-    font-size: 0.7rem;
   }
 }
