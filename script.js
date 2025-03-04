@@ -112,7 +112,10 @@ function showLoading() {
   loadingOverlay.innerHTML = `
     <div class="loading-spinner">
       <div class="spinner"></div>
-      <div class="loading-text">分析中，請稍候...</div>
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
+      <div class="loading-text">分析您的會考成績中</div>
     </div>
   `;
   document.body.appendChild(loadingOverlay);
@@ -125,11 +128,36 @@ function showLoading() {
       loadingOverlay.style.opacity = '1';
     });
   });
+  
+  // Cycle through different loading messages
+  let loadingMessages = [
+    "分析您的會考成績中",
+    "搜尋符合的學校中",
+    "計算落點數據中",
+    "整理分析結果中"
+  ];
+  
+  let messageIndex = 0;
+  const messageInterval = setInterval(() => {
+    messageIndex = (messageIndex + 1) % loadingMessages.length;
+    const loadingTextElement = loadingOverlay.querySelector('.loading-text');
+    if (loadingTextElement) {
+      loadingTextElement.textContent = loadingMessages[messageIndex];
+    }
+  }, 1500);
+  
+  // Store the interval ID on the overlay element so we can clear it later
+  loadingOverlay.messageInterval = messageInterval;
 }
 
 function hideLoading() {
   const loadingOverlay = document.querySelector('.loading-overlay');
   if (loadingOverlay) {
+    // Clear the message cycling interval
+    if (loadingOverlay.messageInterval) {
+      clearInterval(loadingOverlay.messageInterval);
+    }
+    
     loadingOverlay.style.opacity = '0';
     setTimeout(() => {
       loadingOverlay.remove();
