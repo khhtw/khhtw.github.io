@@ -1232,7 +1232,6 @@ function initIdentitySelection() {
     { value: 'student', label: '學生', icon: 'fa-user-graduate' },
     { value: 'parent', label: '家長', icon: 'fa-user-friends' },
     { value: 'teacher', label: '教師', icon: 'fa-chalkboard-teacher' },
-    { value: 'counselor', label: '輔導人員', icon: 'fa-hands-helping' }
   ];
   
   // Create identity option elements
