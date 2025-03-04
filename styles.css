@@ -29,7 +29,7 @@ body {
   padding: 2.5rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px var(--shadow-color);
-  max-width: 800px;
+  max-width: 650px;
   width: 90%;
   margin: 80px auto 20px;
   text-align: center;
@@ -1236,4 +1236,66 @@ button:disabled {
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
   color: var(--text-color);
+}
+
+/* Export format dialog styles */
+.export-format-modal {
+  max-width: 500px;
+}
+
+.export-format-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.export-format-options button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 2px solid var(--primary-color);
+  padding: 15px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.export-format-options button:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+}
+
+.export-format-options button i {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+body.dark-mode .export-format-options button {
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border-color: var(--primary-color);
+}
+
+body.dark-mode .export-format-options button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .export-format-options button {
+    font-size: 1rem;
+    padding: 12px;
+  }
+  
+  .export-format-options button i {
+    font-size: 1.2rem;
+  }
 }
