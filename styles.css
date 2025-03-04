@@ -984,7 +984,7 @@ body.dark-mode #disclaimerModal .close:hover {
   #disclaimerModal li {
     margin-bottom: 15px;
     font-size: 0.95rem;
-    padding-left: 35px;
+    padding-left: 30px;
   }
   
   #disclaimerModal li:before {
@@ -1666,5 +1666,99 @@ body.dark-mode #starsContainer .star.active {
   .instruction-item li {
     font-size: 0.9rem;
     padding-left: 20px;
+  }
+}
+
+/* Identity Selection Styles */
+.identity-icons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.identity-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: var(--card-background);
+  border: 2px solid #bdc3c7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 80px;
+  text-align: center;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+body.dark-mode .identity-option {
+  background-color: var(--dark-card-background);
+  border: 2px solid var(--dark-border-color);
+  color: var(--dark-text-color);
+}
+
+.identity-option:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.identity-option.selected {
+  background-color: rgba(37, 117, 252, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(37, 117, 252, 0.2);
+}
+
+body.dark-mode .identity-option.selected {
+  background-color: rgba(37, 117, 252, 0.2);
+  border-color: var(--primary-color);
+}
+
+.identity-option i {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+}
+
+.identity-option span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Mobile Responsive adjustments for identity icons */
+@media (max-width: 768px) {
+  .identity-icons-container {
+    gap: 10px;
+  }
+  
+  .identity-option {
+    width: 70px;
+    padding: 12px;
+  }
+  
+  .identity-option i {
+    font-size: 1.8rem;
+  }
+  
+  .identity-option span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .identity-icons-container {
+    gap: 8px;
+  }
+  
+  .identity-option {
+    width: 65px;
+    padding: 10px;
+  }
+  
+  .identity-option i {
+    font-size: 1.5rem;
   }
 }

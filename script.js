@@ -854,6 +854,7 @@ function convertToHTML(content) {
 window.onload = function() {
   showDisclaimer();
   initMobileOptimizations();
+  initIdentitySelection();
 };
 
 document.oncontextmenu = function () {
@@ -1049,4 +1050,59 @@ function initMobileOptimizations() {
       document.documentElement.style.setProperty('--real-height', `${window.innerHeight}px`);
     });
   }
+}
+
+function initIdentitySelection() {
+  const identitySection = document.getElementById('identitySection');
+  const originalSelect = document.getElementById('userIdentity');
+  
+  // Create icons container
+  const iconsContainer = document.createElement('div');
+  iconsContainer.className = 'identity-icons-container';
+  
+  // Define identity options with icons
+  const identityOptions = [
+    { value: 'student', label: '學生', icon: 'fa-user-graduate' },
+    { value: 'parent', label: '家長', icon: 'fa-user-friends' },
+    { value: 'teacher', label: '教師', icon: 'fa-chalkboard-teacher' },
+    { value: 'counselor', label: '輔導人員', icon: 'fa-hands-helping' },
+    { value: 'other', label: '其他', icon: 'fa-user' }
+  ];
+  
+  // Create identity option elements
+  identityOptions.forEach(option => {
+    const optionElement = document.createElement('div');
+    optionElement.className = 'identity-option';
+    optionElement.dataset.value = option.value;
+    if (originalSelect.value === option.value) {
+      optionElement.classList.add('selected');
+    }
+    
+    optionElement.innerHTML = `
+      <i class="fas ${option.icon}"></i>
+      <span>${option.label}</span>
+    `;
+    
+    optionElement.addEventListener('click', function() {
+      // Remove selected class from all options
+      document.querySelectorAll('.identity-option').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked option
+      this.classList.add('selected');
+      
+      // Update hidden select value
+      originalSelect.value = this.dataset.value;
+      
+      // Log user activity
+      logUserActivity('identity_selected', { identity: this.dataset.value });
+    });
+    
+    iconsContainer.appendChild(optionElement);
+  });
+  
+  // Hide original select and show icon selection
+  originalSelect.style.display = 'none';
+  originalSelect.parentNode.insertBefore(iconsContainer, originalSelect);
 }
