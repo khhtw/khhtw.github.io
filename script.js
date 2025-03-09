@@ -393,6 +393,19 @@ function displayResults(data) {
                     </ul>
                   </div>`;
   resultsHTML += details;
+  
+  // Add analysis explanation at the bottom
+  let analysisExplanation = `<div class="analysis-explanation">
+                              <h3><i class="fas fa-lightbulb icon"></i> 分析說明</h3>
+                              <div class="explanation-content">
+                                <p><i class="fas fa-check-circle icon"></i> <strong>總積分計算方式：</strong>依據111學年度五科會考成績及作文級分所加總的積分，每一科最高7分(A++)，最低1分(C)。</p>
+                                <p><i class="fas fa-check-circle icon"></i> <strong>總積點計算方式：</strong>依據各科會考成績加權計算，採計各校參採科目及其比重。</p>
+                                <p><i class="fas fa-check-circle icon"></i> <strong>錄取可能性判定：</strong>系統根據前一年度各校最低錄取分數進行估算，結果僅供參考。</p>
+                                <p><i class="fas fa-exclamation-triangle icon"></i> <strong>重要提醒：</strong>實際錄取結果可能因當年度考生整體表現、招生名額調整及各校招生政策變動而有所不同。</p>
+                                <p><i class="fas fa-hand-point-right icon"></i> <strong>建議參考：</strong>除本分析外，也請參考各校歷年錄取標準、個人志願及興趣、學校特色課程等因素做出選擇。</p>
+                              </div>
+                            </div>`;
+  resultsHTML += analysisExplanation;
   resultsHTML += `</div>`;
   const resultsElement = document.getElementById('results');
   resultsElement.innerHTML = resultsHTML;
