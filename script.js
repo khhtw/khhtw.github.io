@@ -622,7 +622,7 @@ function exportAsFormat(format, contentEncoded) {
 function convertToCSV(content) {
   // Basic conversion to CSV format
   const lines = content.split('\n');
-  let csvContent = '';
+  let csvContent = '\ufeff'; // Add BOM (Byte Order Mark) for UTF-8 encoding
   
   lines.forEach(line => {
     // Replace multiple spaces with a single comma
@@ -767,14 +767,6 @@ function convertToHTML(content) {
       padding: 8px 15px;
       border-radius: 5px;
     }
-    .disclaimer {
-      font-size: 0.9em;
-      color: #666;
-      text-align: center;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
     .badge {
       display: inline-block;
       background: #2575fc;
@@ -783,6 +775,71 @@ function convertToHTML(content) {
       padding: 2px 10px;
       font-size: 0.8em;
       margin-left: 10px;
+    }
+    .disclaimer {
+      font-size: 0.9em;
+      color: #666;
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .analysis-details {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 25px;
+    }
+    .analysis-details h3 {
+      color: #2575fc;
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+    .analysis-details ul {
+      list-style-type: none;
+      padding-left: 5px;
+    }
+    .analysis-details li {
+      padding: 5px 0;
+      border-bottom: 1px dashed #e9ecef;
+    }
+    .analysis-details li:last-child {
+      border-bottom: none;
+    }
+    .explanation-section {
+      margin-top: 30px;
+      background: #f0f7ff;
+      border-radius: 8px;
+      padding: 20px;
+      border-left: 5px solid #2575fc;
+    }
+    .explanation-section h3 {
+      color: #2575fc;
+      margin-top: 0;
+    }
+    .explanation-item {
+      display: flex;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+    .explanation-icon {
+      color: #2575fc;
+      margin-right: 10px;
+      font-size: 1.2em;
+      margin-top: 3px;
+    }
+    .report-signature {
+      margin-top: 40px;
+      text-align: center;
+      font-style: italic;
+      color: #6c757d;
+    }
+    .report-logo {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2em;
+      color: #2575fc;
     }
     @media print {
       body {
@@ -796,6 +853,9 @@ function convertToHTML(content) {
 </head>
 <body>
   <div class="container">
+    <div class="report-logo">
+      <i class="fas fa-chart-line"></i>
+    </div>
     <div class="header">
       <h1><i class="fas fa-chart-line"></i> 高雄區會考落點分析結果</h1>
       <div class="timestamp">產生時間: ${new Date().toLocaleString('zh-TW')}</div>
@@ -835,14 +895,35 @@ function convertToHTML(content) {
       html += `<li class="school-item"><i class="fas fa-check-circle" style="color: #2575fc; margin-right: 8px;"></i>${schoolName}</li>`;
     } else if (line.includes('暫時沒有符合條件的學校')) {
       html += `<div class="summary-item"><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> ${line}</div>`;
+    } else if (line.includes('分析詳細資料')) {
+      html += `</ul></div><div class="analysis-details">
+                <h3><i class="fas fa-info-circle"></i> 分析詳細資料</h3>
+                <ul>`;
+    } else if (line.includes('分析者身份') || line.includes('國文') || line.includes('英文') || 
+               line.includes('數學') || line.includes('自然') || line.includes('社會') ||
+               line.includes('作文') || line.includes('學校屬性') || 
+               line.includes('學校類型') || line.includes('分析時間')) {
+      html += `<li><i class="fas fa-angle-right" style="color: #2575fc; margin-right: 8px;"></i>${line}</li>`;
+    } else if (line.includes('分析說明')) {
+      html += `</ul></div><div class="explanation-section">
+                <h3><i class="fas fa-lightbulb"></i> 分析說明</h3>`;
+    } else if (line.includes('總積分計算方式') || line.includes('總積點計算方式') ||
+              line.includes('錄取可能性') || line.includes('重要提醒') || line.includes('建議參考')) {
+      html += `<div class="explanation-item">
+                <div class="explanation-icon"><i class="fas fa-check-circle"></i></div>
+                <div>${line}</div>
+              </div>`;
     }
   });
 
-  html += `</ul>
-    </div>
+  html += `</div>
     <div class="disclaimer">
       <p><strong>重要提醒：</strong>本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同。</p>
+      <p>各校實際錄取標準以官方公告為準，請務必參考各校招生簡章及最新公告。</p>
+    </div>
+    <div class="report-signature">
       <p> ${new Date().getFullYear()} KHTW 高雄區會考落點分析系統</p>
+      <p>本報告由系統自動生成 • 此為數位文件 • ID: ${Math.random().toString(36).substring(2, 12)}</p>
     </div>
   </div>
 </body>
