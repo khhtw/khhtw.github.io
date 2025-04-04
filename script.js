@@ -976,6 +976,7 @@ function printResults() {
           margin: 0;
           padding: 20px;
           color: #333;
+          background: #fff;
         }
         
         .print-container {
@@ -987,19 +988,53 @@ function printResults() {
         
         .print-header {
           text-align: center;
-          margin-bottom: 20px;
+          margin-bottom: 30px;
           padding-bottom: 20px;
           border-bottom: 2px solid #2575fc;
+          position: relative;
+        }
+        
+        .print-header::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(to right, #2575fc, #6a11cb);
         }
         
         .print-header h1 {
           color: #2575fc;
           margin: 0 0 10px 0;
+          font-size: 28px;
         }
         
         .print-timestamp {
           color: #666;
           font-style: italic;
+        }
+        
+        .print-logo {
+          text-align: center;
+          margin-bottom: 20px;
+          font-size: 2.5em;
+          color: #2575fc;
+        }
+        
+        .print-summary {
+          display: flex;
+          justify-content: space-around;
+          margin: 20px 0;
+          background: #f0f7ff;
+          padding: 15px;
+          border-radius: 8px;
+        }
+        
+        .print-summary-item {
+          font-size: 1.2em;
+          font-weight: bold;
+          text-align: center;
         }
         
         .print-watermark {
@@ -1010,6 +1045,7 @@ function printResults() {
           padding: 10px;
           border: 1px dashed #ccc;
           background: #f9f9f9;
+          border-radius: 8px;
         }
         
         .print-footer {
@@ -1023,23 +1059,128 @@ function printResults() {
         
         h2, h3 {
           color: #2575fc;
+          margin-top: 25px;
+          margin-bottom: 15px;
+          position: relative;
+          padding-left: 15px;
+          border-left: 4px solid #2575fc;
         }
         
         ul {
           list-style-type: none;
-          padding-left: 0;
+          padding-left: 10px;
         }
         
         li {
-          margin-bottom: 8px;
+          margin-bottom: 10px;
           padding: 8px 12px;
           background: #f9f9f9;
           border-radius: 4px;
+          position: relative;
+          padding-left: 30px;
+        }
+        
+        li::before {
+          content: "✓";
+          position: absolute;
+          left: 10px;
+          color: #2575fc;
         }
         
         .icon {
           margin-right: 8px;
           color: #2575fc;
+        }
+        
+        .print-school-type {
+          background: #e9ecef;
+          padding: 8px 15px;
+          border-radius: 5px;
+          margin-top: 20px;
+          font-weight: bold;
+        }
+        
+        .print-badge {
+          display: inline-block;
+          background: #2575fc;
+          color: white;
+          border-radius: 50px;
+          padding: 2px 10px;
+          font-size: 0.8em;
+          margin-left: 10px;
+        }
+        
+        .print-details {
+          background: #f8f9fa;
+          border: 1px solid #e9ecef;
+          border-radius: 8px;
+          padding: 15px;
+          margin-top: 25px;
+        }
+        
+        .print-details h3 {
+          border-left: none;
+          padding-left: 0;
+          color: #2575fc;
+          margin-top: 0;
+        }
+        
+        .print-details ul {
+          columns: 2;
+          column-gap: 20px;
+        }
+        
+        .print-details li {
+          break-inside: avoid;
+          background: none;
+          padding: 5px 0;
+          border-bottom: 1px dashed #e9ecef;
+        }
+        
+        .print-details li:last-child {
+          border-bottom: none;
+        }
+        
+        .print-explanation {
+          margin-top: 30px;
+          background: #f0f7ff;
+          border-radius: 8px;
+          padding: 15px;
+          border-left: 5px solid #2575fc;
+        }
+        
+        .print-explanation h3 {
+          border-left: none;
+          padding-left: 0;
+        }
+        
+        .print-explanation-item {
+          margin-bottom: 10px;
+          display: flex;
+          align-items: flex-start;
+        }
+        
+        .print-explanation-icon {
+          margin-right: 10px;
+          min-width: 20px;
+          color: #2575fc;
+        }
+        
+        .print-qr {
+          text-align: center;
+          margin: 30px 0;
+        }
+        
+        .print-qr img {
+          width: 100px;
+          height: 100px;
+        }
+        
+        .print-divider {
+          height: 3px;
+          background: linear-gradient(to right, #2575fc, transparent);
+          margin: 30px 0;
+          border-radius: 3px;
         }
         
         @media print {
@@ -1049,35 +1190,59 @@ function printResults() {
           
           .print-container {
             padding: 0;
+            max-width: 100%;
+          }
+          
+          .print-qr {
+            break-inside: avoid;
+          }
+          
+          .print-details, .print-explanation {
+            break-inside: avoid;
           }
         }
       </style>
     </head>
     <body>
       <div class="print-container">
+        <div class="print-logo">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        
         <div class="print-header">
-          <h1><i class="fas fa-chart-line"></i>高雄區會考落點分析結果</h1>
+          <h1><i class="fas fa-chart-line"></i> 高雄區會考落點分析結果</h1>
           <div class="print-timestamp">產生時間: ${dateTime}</div>
         </div>
         
         <div class="print-content">
-          ${resultsContent}
+          ${resultsContent.replace(/results-card/g, 'print-content')
+                         .replace(/results-summary/g, 'print-summary')
+                         .replace(/result-item/g, 'print-summary-item')
+                         .replace(/result-details/g, 'print-details')
+                         .replace(/analysis-explanation/g, 'print-explanation')
+                         .replace(/explanation-content/g, 'print-explanation-content')
+                         .replace(/school-type/g, 'print-school-type')
+                         .replace(/school-count/g, 'print-badge')}
         </div>
         
+        <div class="print-divider"></div>
+        
         <div class="print-watermark">
-          本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同。
+          本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同，請參考各校官方公告。
         </div>
         
         <div class="print-footer">
-          <p> ${new Date().getFullYear()} KHTW 高雄區會考落點分析系統</p>
-          <p>本文件由 KHTW 會考落點分析平台自動生成，請與官方發布之資訊核對。</p>
+          <p><strong>KHTW 高雄區會考落點分析系統</strong> | ${new Date().getFullYear()} 版權所有</p>
+          <p>本文件由系統自動生成 | 文件編號: KH${Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
         </div>
       </div>
       
       <script>
         // Automatically print when loaded
         window.onload = function() {
-          window.print();
+          setTimeout(function() {
+            window.print();
+          }, 500);
         }
       </script>
     </body>
