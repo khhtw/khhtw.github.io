@@ -374,12 +374,13 @@ function displayResults(data) {
       if (!groupedSchools[school.type]) {
         groupedSchools[school.type] = [];
       }
-      groupedSchools[school.type].push(school.name);
+      groupedSchools[school.type].push(school);
     });
     Object.entries(groupedSchools).forEach(([type, schools]) => {
       resultsHTML += `<h3>${type} <span class="school-count">(${schools.length}所)</span></h3><ul>`;
-      schools.forEach(schoolName => {
-        resultsHTML += `<li><i class="fas fa-check-circle icon"></i> ${schoolName}</li>`;
+      schools.forEach(school => {
+        const ownershipLabel = school.ownership === 'public' ? '公立' : '私立';
+        resultsHTML += `<li><i class="fas fa-check-circle icon"></i> <span class="school-ownership-badge ${school.ownership}">${ownershipLabel}</span> ${school.name}</li>`;
       });
       resultsHTML += `</ul>`;
     });
@@ -738,7 +739,7 @@ function printResults() {
           left: 0;
           width: 100%;
           height: 2px;
-          background: linear-gradient(to right, #4361ee, #7209b7);
+          background: linear-gradient(to right, #4361ee, transparent);
         }
         
         .print-header h1 {
@@ -983,6 +984,24 @@ function printResults() {
             page-break-after: avoid;
           }
         }
+        
+        .print-school-ownership {
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 50px;
+          font-size: 0.8em;
+          font-weight: 600;
+          margin-right: 6px;
+          color: white;
+        }
+        
+        .print-school-ownership.public {
+          background: linear-gradient(to right, #4CAF50, #8BC34A);
+        }
+        
+        .print-school-ownership.private {
+          background: linear-gradient(to right, #FF9800, #FFC107);
+        }
       </style>
     </head>
     <body>
@@ -1027,6 +1046,14 @@ function printResults() {
             window.print();
           }, 500);
         }
+      </script>
+      
+      <script>
+        // Replace school ownership badges for print version
+        document.querySelectorAll('.school-ownership-badge').forEach(badge => {
+          badge.classList.remove('school-ownership-badge');
+          badge.classList.add('print-school-ownership');
+        });
       </script>
     </body>
     </html>

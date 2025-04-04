@@ -1139,7 +1139,6 @@ body.dark-mode .disclaimer-list li {
   left: 0;
   top: 2px;
   color: var(--primary-color);
-  font-size: 1.2rem;
 }
 
 .disclaimer-list li:hover {
@@ -1691,12 +1690,38 @@ body.dark-mode .results-summary .result-item {
   border-left: 3px solid var(--primary-color);
 }
 
-.results-card li i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+.results-card li .school-ownership {
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 5px;
   color: var(--primary-color);
+}
+
+.school-ownership-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-right: 6px;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.school-ownership-badge.public {
+  background: linear-gradient(to right, #4CAF50, #8BC34A);
+}
+
+.school-ownership-badge.private {
+  background: linear-gradient(to right, #FF9800, #FFC107);
+}
+
+body.dark-mode .school-ownership-badge {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .results-card li .school-ownership {
+  color: var(--accent-color);
 }
 
 .results-card li:hover {
