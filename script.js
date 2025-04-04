@@ -56,12 +56,12 @@ function showDisclaimer() {
     requestAnimationFrame(() => {
       modal.style.transition = 'opacity 0.5s ease';
       modal.style.opacity = '1';
-      modalContent.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      modalContent.style.transition = 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
       modalContent.style.transform = 'translateY(0)';
     });
   });
 
-  // Lock body scroll when modal is open on mobile
+  // Lock body scroll when modal is open
   document.body.style.overflow = 'hidden';
   
   // Add class for mobile detection
@@ -70,18 +70,6 @@ function showDisclaimer() {
   } else {
     modalContent.classList.remove('mobile-view');
   }
-}
-
-function startDragging(e) {
-  return false;
-}
-
-function drag(e) {
-  return false;
-}
-
-function stopDragging() {
-  return false;
 }
 
 function closeDisclaimer() {
@@ -98,6 +86,21 @@ function closeDisclaimer() {
     // Restore body scroll when modal is closed
     document.body.style.overflow = '';
   }, 500);
+  
+  // Log user activity
+  logUserActivity('disclaimer_closed');
+}
+
+function startDragging(e) {
+  return false;
+}
+
+function drag(e) {
+  return false;
+}
+
+function stopDragging() {
+  return false;
 }
 
 function showInvitationValidationAnimation() {
@@ -399,7 +402,7 @@ function displayResults(data) {
                               <h3><i class="fas fa-lightbulb icon"></i> 分析說明</h3>
                               <div class="explanation-content">
                                 <p><i class="fas fa-check-circle icon"></i> <strong>總積分計算方式：</strong>依據111學年度五科會考成績及作文級分所加總的積分，每一科最高7分(A++)，最低1分(C)。</p>
-                                <p><i class="fas fa-check-circle icon"></i> <strong>總積點計算方式：</strong>依據各科會考成績加權計算，採計各校參採科目及其比重。</p>
+                                <p><i class="fas fa-check-circle icon"></i> <strong>總積點計算方式：</strong>依據各校參採科目及其比重。</p>
                                 <p><i class="fas fa-check-circle icon"></i> <strong>錄取可能性判定：</strong>系統根據前一年度各校最低錄取分數進行估算，結果僅供參考。</p>
                                 <p><i class="fas fa-exclamation-triangle icon"></i> <strong>重要提醒：</strong>實際錄取結果可能因當年度考生整體表現、招生名額調整及各校招生政策變動而有所不同。</p>
                                 <p><i class="fas fa-hand-point-right icon"></i> <strong>建議參考：</strong>除本分析外，也請參考各校歷年錄取標準、個人志願及興趣、學校特色課程等因素做出選擇。</p>
@@ -569,7 +572,9 @@ function exportAsFormat(format, contentEncoded) {
   setTimeout(() => {
     switch (format) {
       case 'txt':
-        blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        // Enhanced TXT format with better formatting
+        const enhancedTxtContent = formatTxtContent(content);
+        blob = new Blob([enhancedTxtContent], { type: 'text/plain;charset=utf-8' });
         fileName = '高雄區會考落點分析結果.txt';
         break;
       case 'csv':
@@ -638,312 +643,132 @@ function convertToCSV(content) {
   const lines = content.split('\n');
   let csvContent = '\ufeff'; // Add BOM (Byte Order Mark) for UTF-8 encoding
   
+  // Add formatted header row
+  csvContent += '"高雄區會考落點分析結果","' + new Date().toLocaleString('zh-TW') + '"\n';
+  csvContent += '"類別","內容"\n';
+  
+  let currentSection = '';
+  let inSchoolsList = false;
+  let schoolType = '';
+  
   lines.forEach(line => {
-    // Replace multiple spaces with a single comma
-    const csvLine = line.trim().replace(/\s{2,}/g, ',');
-    if (csvLine) {
-      csvContent += csvLine + '\n';
+    line = line.trim();
+    if (!line) return;
+    
+    // Format special sections
+    if (line.includes('分析結果')) {
+      currentSection = '基本資訊';
+    } else if (line.includes('總積分')) {
+      csvContent += '"總績效","' + line.trim() + '"\n';
+    } else if (line.includes('總積點')) {
+      csvContent += '"總績效","' + line.trim() + '"\n';
+    } else if (line.includes('可能錄取的學校')) {
+      inSchoolsList = true;
+      csvContent += '"\n錄取學校列表","以下為可能錄取的學校"\n';
+    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
+      schoolType = line.split('(')[0].trim();
+      csvContent += '"學校類型","' + schoolType + '"\n';
+    } else if (inSchoolsList && line.includes('icon')) {
+      const schoolName = line.replace(/.*icon\)/, '').trim();
+      csvContent += '"' + schoolType + '","' + schoolName + '"\n';
+    } else if (line.includes('分析詳細資料')) {
+      currentSection = '詳細資料';
+      csvContent += '"\n詳細資料","以下為分析詳細資料"\n';
+    } else if (currentSection === '詳細資料' && line.includes(':')) {
+      const parts = line.split(':');
+      if (parts.length >= 2) {
+        csvContent += '"' + parts[0].trim() + '","' + parts[1].trim() + '"\n';
+      } else {
+        csvContent += '"詳細資料","' + line.trim() + '"\n';
+      }
+    } else if (line.includes('分析說明')) {
+      currentSection = '分析說明';
+      csvContent += '"\n分析說明","以下為分析相關說明"\n';
+    } else if (currentSection === '分析說明') {
+      csvContent += '"說明","' + line.trim() + '"\n';
+    } else {
+      // Other content
+      csvContent += '"' + currentSection + '","' + line.trim() + '"\n';
     }
   });
   
   return csvContent;
 }
 
-function convertToJSON(content) {
+function formatTxtContent(content) {
+  const now = new Date();
+  const dateTime = now.toLocaleString('zh-TW');
   const lines = content.split('\n');
-  const result = {
-    title: '高雄區會考落點分析結果',
-    generatedTime: new Date().toISOString(),
-    summary: {},
-    schools: []
-  };
+  let formattedContent = '';
+  
+  // Add a more aesthetic header
+  formattedContent += '╔══════════════════════════════════════════════════════════╗\n';
+  formattedContent += '║                 高雄區會考落點分析結果                   ║\n';
+  formattedContent += '╠══════════════════════════════════════════════════════════╣\n';
+  formattedContent += `║  產生時間: ${dateTime.padEnd(42, ' ')}║\n`;
+  formattedContent += '╚══════════════════════════════════════════════════════════╝\n\n';
   
   let currentSection = '';
-  
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) return;
-    
-    if (line.includes('總積分：')) {
-      result.summary.totalPoints = line.split('：')[1].trim();
-    } else if (line.includes('總積點：')) {
-      result.summary.totalCredits = line.split('：')[1].trim();
-    } else if (line.includes('可能錄取的學校')) {
-      currentSection = 'schools';
-    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
-      // School type header
-      currentSection = line.split('(')[0].trim();
-      result.schools.push({
-        type: currentSection,
-        names: []
-      });
-    } else if (currentSection && line.includes('icon')) {
-      // This is a school name
-      const schoolIndex = result.schools.findIndex(s => s.type === currentSection);
-      if (schoolIndex !== -1) {
-        const schoolName = line.replace(/.*icon\)/, '').trim();
-        result.schools[schoolIndex].names.push(schoolName);
-      }
-    }
-  });
-  
-  return JSON.stringify(result, null, 2);
-}
-
-function convertToHTML(content) {
-  const lines = content.split('\n');
-  let html = `<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>高雄區會考落點分析結果</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-    body {
-      font-family: 'Noto Sans TC', sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-      background-color: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #2575fc;
-      position: relative;
-    }
-    .header:after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, #2575fc, #6a11cb);
-    }
-    h1 {
-      color: #2575fc;
-      margin: 0 0 10px 0;
-    }
-    .timestamp {
-      color: #666;
-      font-style: italic;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section-title {
-      color: #2575fc;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
-    }
-    .summary-item {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin: 10px 0;
-      padding: 10px;
-      background: #f0f7ff;
-      border-radius: 5px;
-      border-left: 4px solid #2575fc;
-    }
-    .school-list {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    .school-item {
-      background: #f9f9f9;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-    }
-    .school-item:hover {
-      transform: translateX(5px);
-      background: #f0f7ff;
-    }
-    .school-type {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #333;
-      background: #e9ecef;
-      padding: 8px 15px;
-      border-radius: 5px;
-    }
-    .badge {
-      display: inline-block;
-      background: #2575fc;
-      color: white;
-      border-radius: 50px;
-      padding: 2px 10px;
-      font-size: 0.8em;
-      margin-left: 10px;
-    }
-    .disclaimer {
-      font-size: 0.9em;
-      color: #666;
-      text-align: center;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
-    .analysis-details {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 25px;
-    }
-    .analysis-details h3 {
-      color: #2575fc;
-      margin-top: 0;
-      font-size: 1.3em;
-    }
-    .analysis-details ul {
-      list-style-type: none;
-      padding-left: 5px;
-    }
-    .analysis-details li {
-      padding: 5px 0;
-      border-bottom: 1px dashed #e9ecef;
-    }
-    .analysis-details li:last-child {
-      border-bottom: none;
-    }
-    .explanation-section {
-      margin-top: 30px;
-      background: #f0f7ff;
-      border-radius: 8px;
-      padding: 20px;
-      border-left: 5px solid #2575fc;
-    }
-    .explanation-section h3 {
-      color: #2575fc;
-      margin-top: 0;
-    }
-    .explanation-item {
-      display: flex;
-      margin-bottom: 10px;
-      align-items: flex-start;
-    }
-    .explanation-icon {
-      color: #2575fc;
-      margin-right: 10px;
-      font-size: 1.2em;
-      margin-top: 3px;
-    }
-    .report-signature {
-      margin-top: 40px;
-      text-align: center;
-      font-style: italic;
-      color: #6c757d;
-    }
-    .report-logo {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 2em;
-      color: #2575fc;
-    }
-    @media print {
-      body {
-        background: none;
-      }
-      .container {
-        box-shadow: none;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="report-logo">
-      <i class="fas fa-chart-line"></i>
-    </div>
-    <div class="header">
-      <h1><i class="fas fa-chart-line"></i> 高雄區會考落點分析結果</h1>
-      <div class="timestamp">產生時間: ${new Date().toLocaleString('zh-TW')}</div>
-    </div>
-    <div class="content">`;
-
   let inSchoolsList = false;
-  let currentSchoolType = '';
-
+  let schoolCount = 0;
+  
   lines.forEach(line => {
     line = line.trim();
     if (!line) return;
     
-    if (line.includes('總積分') || line.includes('總積點')) {
-      html += `<div class="summary-item"><i class="fas fa-star"></i> ${line}</div>`;
+    if (line.includes('分析結果')) {
+      formattedContent += '┌──────────────────────────────────────────────────────┐\n';
+      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
+      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
+    } else if (line.includes('總積分') || line.includes('總積點')) {
+      formattedContent += '▶ ' + line + '\n';
     } else if (line.includes('可能錄取的學校')) {
-      html += `<div class="section">
-        <h2 class="section-title"><i class="fas fa-list-ul"></i> ${line}</h2>`;
       inSchoolsList = true;
-    } else if (line.includes('所學校可能錄取')) {
-      html += `<div class="summary-item"><i class="fas fa-building"></i> ${line}</div>`;
+      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
+      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
+      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
+    } else if (inSchoolsList && line.includes('所學校可能錄取')) {
+      formattedContent += '▶ ' + line + '\n\n';
     } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
       const matches = line.match(/^(\w+)\s*\((\d+)所\)$/);
       if (matches && matches.length >= 3) {
         const type = matches[1];
-        const count = matches[2];
-        currentSchoolType = type;
-        html += `<div class="school-type"><i class="fas fa-graduation-cap"></i> ${type} <span class="badge">${count}所</span></div>
-        <ul class="school-list">`;
-      } else {
-        currentSchoolType = line;
-        html += `<div class="school-type">${line}</div>
-          <ul class="school-list">`;
+        schoolCount = parseInt(matches[2]);
+        formattedContent += '┌─────────────────────────────────┐\n';
+        formattedContent += '│ ' + `${type} (${schoolCount}所)`.padEnd(35, ' ') + '│\n';
+        formattedContent += '└─────────────────────────────────┘\n';
       }
     } else if (inSchoolsList && line.includes('icon')) {
       const schoolName = line.replace(/.*icon\)/, '').trim();
-      html += `<li class="school-item"><i class="fas fa-check-circle" style="color: #2575fc; margin-right: 8px;"></i>${schoolName}</li>`;
-    } else if (line.includes('暫時沒有符合條件的學校')) {
-      html += `<div class="summary-item"><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> ${line}</div>`;
+      formattedContent += '  ✓ ' + schoolName + '\n';
     } else if (line.includes('分析詳細資料')) {
-      html += `</ul></div><div class="analysis-details">
-                <h3><i class="fas fa-info-circle"></i> 分析詳細資料</h3>
-                <ul>`;
-    } else if (line.includes('分析者身份') || line.includes('國文') || line.includes('英文') || 
-               line.includes('數學') || line.includes('自然') || line.includes('社會') ||
-               line.includes('作文') || line.includes('學校屬性') || 
-               line.includes('學校類型') || line.includes('分析時間')) {
-      html += `<li><i class="fas fa-angle-right" style="color: #2575fc; margin-right: 8px;"></i>${line}</li>`;
+      inSchoolsList = false;
+      currentSection = 'details';
+      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
+      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
+      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
+    } else if (currentSection === 'details' && line.includes(':')) {
+      formattedContent += '  • ' + line + '\n';
     } else if (line.includes('分析說明')) {
-      html += `</ul></div><div class="explanation-section">
-                <h3><i class="fas fa-lightbulb"></i> 分析說明</h3>`;
-    } else if (line.includes('總積分計算方式') || line.includes('總積點計算方式') ||
-              line.includes('錄取可能性') || line.includes('重要提醒') || line.includes('建議參考')) {
-      html += `<div class="explanation-item">
-                <div class="explanation-icon"><i class="fas fa-check-circle"></i></div>
-                <div>${line}</div>
-              </div>`;
+      currentSection = 'explanation';
+      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
+      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
+      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
+    } else if (currentSection === 'explanation') {
+      formattedContent += '  ► ' + line + '\n';
+    } else {
+      formattedContent += line + '\n';
     }
   });
-
-  html += `</div>
-    <div class="disclaimer">
-      <p><strong>重要提醒：</strong>本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同。</p>
-      <p>各校實際錄取標準以官方公告為準，請務必參考各校招生簡章及最新公告。</p>
-    </div>
-    <div class="report-signature">
-      <p> ${new Date().getFullYear()} KHTW 高雄區會考落點分析系統</p>
-      <p>本報告由系統自動生成 • 此為數位文件 • ID: ${Math.random().toString(36).substring(2, 12)}</p>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  return html;
+  
+  // Add footer
+  formattedContent += '\n';
+  formattedContent += '╔══════════════════════════════════════════════════════════╗\n';
+  formattedContent += '║                 KHTW 高雄區會考落點分析系統               ║\n';
+  formattedContent += '║                本分析結果僅供參考使用                     ║\n';
+  formattedContent += '╚══════════════════════════════════════════════════════════╝\n';
+  
+  return formattedContent;
 }
 
 function printResults() {
