@@ -353,10 +353,10 @@ function displayResults(data) {
   let resultsHTML = `<div class="results-card">`;
   resultsHTML += `<h2><i class="fas fa-clipboard-check icon"></i> 分析結果</h2>`;
   resultsHTML += `<div class="results-summary">
-                    <p class="result-item"><i class="fas fa-star icon"></i> 總積分：${totalPoints}</p>
-                    <p class="result-item"><i class="fas fa-award icon"></i> 總積點：${totalCredits}</p>
+                    <div class="result-item"><i class="fas fa-star icon"></i> 總積分：${totalPoints}</div>
+                    <div class="result-item"><i class="fas fa-award icon"></i> 總積點：${totalCredits}</div>
                   </div>`;
-  resultsHTML += `<h3><i class="fas fa-list-ul icon"></i> 可能錄取的學校：</h3>`;
+  resultsHTML += `<h3><i class="fas fa-list-ul icon"></i> 可能錄取的學校</h3>`;
   if (eligibleSchools && eligibleSchools.length > 0) {
     resultsHTML += `<p class="result-item"><i class="fas fa-building icon"></i> 共有 ${eligibleSchools.length} 所學校可能錄取</p>`;
     let groupedSchools = {};
@@ -367,14 +367,14 @@ function displayResults(data) {
       groupedSchools[school.type].push(school.name);
     });
     Object.entries(groupedSchools).forEach(([type, schools]) => {
-      resultsHTML += `<h3>${type} (${schools.length}所)</h3><ul>`;
+      resultsHTML += `<h3>${type} <span class="school-count">(${schools.length}所)</span></h3><ul>`;
       schools.forEach(schoolName => {
-        resultsHTML += `<li class="result-item"><i class="fas fa-check-circle icon"></i> ${schoolName}</li>`;
+        resultsHTML += `<li><i class="fas fa-check-circle icon"></i> ${schoolName}</li>`;
       });
       resultsHTML += `</ul>`;
     });
   } else {
-    resultsHTML += `<p class="result-item"><i class="fas fa-exclamation-triangle icon"></i> 根據您的成績，暫時沒有符合條件的學校。</p>`;
+    resultsHTML += `<div class="no-schools-message"><i class="fas fa-exclamation-triangle icon"></i> 根據您的成績，暫時沒有符合條件的學校。</div>`;
   }
   let details = `<div class="result-details">
                     <h3><i class="fas fa-info-circle icon"></i> 分析詳細資料</h3>
@@ -414,6 +414,18 @@ function displayResults(data) {
     resultsElement.style.display = 'block';
     resultsElement.style.animation = 'fadeIn 0.5s ease-out';
     document.getElementById('exportResults').style.display = 'inline-block';
+    
+    // Add smooth reveal animation for results elements
+    const resultItems = document.querySelectorAll('.results-card > *');
+    resultItems.forEach((item, index) => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        item.style.opacity = '1';
+        item.style.transform = 'translateY(0)';
+      }, 100 + (index * 100));
+    });
   }, 100);
 }
 
