@@ -130,10 +130,16 @@ function showLoading() {
   loadingOverlay.innerHTML = `
     <div class="loading-spinner">
       <div class="spinner"></div>
+      <div class="loading-text">分析成績中</div>
       <div class="progress-container">
         <div class="progress-bar"></div>
       </div>
-      <div class="loading-text">分析您的會考成績中</div>
+      <div class="loading-status">計算積分與積點...</div>
+      <div class="loading-icons">
+        <i class="fas fa-chart-line loading-icon"></i>
+        <i class="fas fa-school loading-icon"></i>
+        <i class="fas fa-graduation-cap loading-icon"></i>
+      </div>
     </div>
   `;
   document.body.appendChild(loadingOverlay);
@@ -149,18 +155,19 @@ function showLoading() {
   
   // Cycle through different loading messages
   let loadingMessages = [
-    "分析您的會考成績中",
-    "搜尋符合的學校中",
-    "計算落點數據中",
-    "整理分析結果中"
+    "計算積分與積點...",
+    "搜尋符合的學校中...",
+    "篩選適合的科系...",
+    "比對錄取門檻...",
+    "整理分析結果中..."
   ];
   
   let messageIndex = 0;
   const messageInterval = setInterval(() => {
     messageIndex = (messageIndex + 1) % loadingMessages.length;
-    const loadingTextElement = loadingOverlay.querySelector('.loading-text');
-    if (loadingTextElement) {
-      loadingTextElement.textContent = loadingMessages[messageIndex];
+    const loadingStatus = loadingOverlay.querySelector('.loading-status');
+    if (loadingStatus) {
+      loadingStatus.textContent = loadingMessages[messageIndex];
     }
   }, 1500);
   
@@ -1298,13 +1305,13 @@ function initMobileOptimizations() {
     // Improve QR reader experience on mobile
     qrConfig.qrbox = { width: 200, height: 200 };
     
-    // Adjust button behavior for mobile touch
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-      button.addEventListener('touchstart', function() {
+    // Add touch-friendly scaling for all interactive elements
+    const interactiveElements = document.querySelectorAll('button, select, input, .identity-option, .file-input-label, .invite-link, .fullscreen-menu a');
+    interactiveElements.forEach(element => {
+      element.addEventListener('touchstart', function() {
         this.style.transform = 'scale(0.98)';
       });
-      button.addEventListener('touchend', function() {
+      element.addEventListener('touchend', function() {
         this.style.transform = '';
       });
     });
@@ -1314,6 +1321,31 @@ function initMobileOptimizations() {
     window.addEventListener('resize', () => {
       document.documentElement.style.setProperty('--real-height', `${window.innerHeight}px`);
     });
+    
+    // Add viewport height adjustment for better iOS display
+    function adjustHeight() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    adjustHeight();
+    window.addEventListener('resize', adjustHeight);
+    
+    // Adjust padding on container for smaller screens
+    if (window.innerWidth <= 375) {
+      const container = document.querySelector('.container');
+      if (container) {
+        container.style.padding = '1rem 0.6rem';
+      }
+    }
+    
+    // Simplify UI for very small screens
+    if (window.innerWidth <= 320) {
+      const header = document.querySelector('.header-logo span');
+      if (header) {
+        header.textContent = '會考落點分析';
+      }
+    }
   }
 }
 
