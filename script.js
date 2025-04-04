@@ -470,42 +470,44 @@ function showExportFormatDialog(content) {
   
   modal.innerHTML = `
     <div class="modal-content export-format-modal">
-      <span class="close" onclick="closeExportFormatDialog()">&times;</span>
-      <h2><i class="fas fa-file-export icon"></i> 選擇匯出格式</h2>
+      <div class="export-header">
+        <h2><i class="fas fa-file-export icon"></i> 選擇匯出格式</h2>
+        <span class="close" onclick="closeExportFormatDialog()">&times;</span>
+      </div>
       <div class="export-format-options">
-        <button onclick="exportAsFormat('txt', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-alt icon"></i> 
-          <div>
-            <div>純文字檔 (.txt)</div>
-            <span class="format-description">基本文字格式，適合所有設備開啟</span>
+        <button onclick="exportAsFormat('txt', '${encodeURIComponent(content)}')" class="export-option">
+          <div class="export-option-icon"><i class="fas fa-file-alt"></i></div>
+          <div class="export-option-content">
+            <div class="export-option-title">純文字檔 (.txt)</div>
+            <span class="export-option-description">基本文字格式，適合所有設備開啟</span>
           </div>
         </button>
-        <button onclick="exportAsFormat('csv', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-csv icon"></i>
-          <div>
-            <div>CSV 檔案 (.csv)</div>
-            <span class="format-description">可用Excel或試算表軟體開啟，便於數據處理</span>
+        <button onclick="exportAsFormat('csv', '${encodeURIComponent(content)}')" class="export-option">
+          <div class="export-option-icon"><i class="fas fa-file-csv"></i></div>
+          <div class="export-option-content">
+            <div class="export-option-title">CSV 檔案 (.csv)</div>
+            <span class="export-option-description">可用Excel或試算表軟體開啟，便於數據處理</span>
           </div>
         </button>
-        <button onclick="exportAsFormat('json', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-code icon"></i>
-          <div>
-            <div>JSON 檔案 (.json)</div>
-            <span class="format-description">適合程式開發者或進階數據分析</span>
+        <button onclick="exportAsFormat('json', '${encodeURIComponent(content)}')" class="export-option">
+          <div class="export-option-icon"><i class="fas fa-file-code"></i></div>
+          <div class="export-option-content">
+            <div class="export-option-title">JSON 檔案 (.json)</div>
+            <span class="export-option-description">適合程式開發者或進階數據分析</span>
           </div>
         </button>
-        <button onclick="exportAsFormat('html', '${encodeURIComponent(content)}')">
-          <i class="fas fa-file-code icon"></i>
-          <div>
-            <div>HTML 檔案 (.html)</div>
-            <span class="format-description">網頁格式，保留視覺效果與排版</span>
+        <button onclick="exportAsFormat('html', '${encodeURIComponent(content)}')" class="export-option">
+          <div class="export-option-icon"><i class="fas fa-file-code"></i></div>
+          <div class="export-option-content">
+            <div class="export-option-title">HTML 檔案 (.html)</div>
+            <span class="export-option-description">網頁格式，保留視覺效果與排版</span>
           </div>
         </button>
-        <button onclick="printResults()">
-          <i class="fas fa-print icon"></i>
-          <div>
-            <div>列印結果</div>
-            <span class="format-description">直接列印或儲存為PDF文件</span>
+        <button onclick="printResults()" class="export-option">
+          <div class="export-option-icon"><i class="fas fa-print"></i></div>
+          <div class="export-option-content">
+            <div class="export-option-title">列印結果</div>
+            <span class="export-option-description">直接列印或儲存為PDF文件</span>
           </div>
         </button>
       </div>
