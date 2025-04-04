@@ -718,13 +718,16 @@ function printResults() {
           margin: 0 auto;
           background: #fff;
           padding: 20px;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         
         .print-header {
           text-align: center;
           margin-bottom: 30px;
           padding-bottom: 20px;
-          border-bottom: 2px solid #2575fc;
+          border-bottom: 2px solid #4361ee;
           position: relative;
         }
         
@@ -735,11 +738,11 @@ function printResults() {
           left: 0;
           width: 100%;
           height: 2px;
-          background: linear-gradient(to right, #2575fc, #6a11cb);
+          background: linear-gradient(to right, #4361ee, #7209b7);
         }
         
         .print-header h1 {
-          color: #2575fc;
+          color: #4361ee;
           margin: 0 0 10px 0;
           font-size: 28px;
         }
@@ -753,7 +756,7 @@ function printResults() {
           text-align: center;
           margin-bottom: 20px;
           font-size: 2.5em;
-          color: #2575fc;
+          color: #4361ee;
         }
         
         .print-summary {
@@ -763,12 +766,18 @@ function printResults() {
           background: #f0f7ff;
           padding: 15px;
           border-radius: 8px;
+          border-left: 4px solid #4361ee;
         }
         
         .print-summary-item {
           font-size: 1.2em;
           font-weight: bold;
           text-align: center;
+          padding: 10px;
+          background: white;
+          border-radius: 6px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          min-width: 150px;
         }
         
         .print-watermark {
@@ -792,17 +801,20 @@ function printResults() {
         }
         
         h2, h3 {
-          color: #2575fc;
+          color: #4361ee;
           margin-top: 25px;
           margin-bottom: 15px;
           position: relative;
           padding-left: 15px;
-          border-left: 4px solid #2575fc;
+          border-left: 4px solid #4361ee;
         }
         
         ul {
           list-style-type: none;
           padding-left: 10px;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 10px;
         }
         
         li {
@@ -812,18 +824,20 @@ function printResults() {
           border-radius: 4px;
           position: relative;
           padding-left: 30px;
+          border-left: 2px solid #4361ee;
+          transition: all 0.3s ease;
         }
         
         li::before {
           content: "✓";
           position: absolute;
           left: 10px;
-          color: #2575fc;
+          color: #4361ee;
         }
         
         .icon {
           margin-right: 8px;
-          color: #2575fc;
+          color: #4361ee;
         }
         
         .print-school-type {
@@ -832,11 +846,13 @@ function printResults() {
           border-radius: 5px;
           margin-top: 20px;
           font-weight: bold;
+          color: #4361ee;
+          border-left: 4px solid #7209b7;
         }
         
         .print-badge {
           display: inline-block;
-          background: #2575fc;
+          background: #4361ee;
           color: white;
           border-radius: 50px;
           padding: 2px 10px;
@@ -850,25 +866,32 @@ function printResults() {
           border-radius: 8px;
           padding: 15px;
           margin-top: 25px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .print-details h3 {
           border-left: none;
           padding-left: 0;
-          color: #2575fc;
+          color: #4361ee;
           margin-top: 0;
+          border-bottom: 2px solid #4361ee;
+          padding-bottom: 8px;
         }
         
         .print-details ul {
           columns: 2;
           column-gap: 20px;
+          display: block;
         }
         
         .print-details li {
           break-inside: avoid;
-          background: none;
-          padding: 5px 0;
-          border-bottom: 1px dashed #e9ecef;
+          background: white;
+          padding: 5px 10px;
+          margin-bottom: 5px;
+          border-radius: 4px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          border-left: 2px solid #7209b7;
         }
         
         .print-details li:last-child {
@@ -880,24 +903,30 @@ function printResults() {
           background: #f0f7ff;
           border-radius: 8px;
           padding: 15px;
-          border-left: 5px solid #2575fc;
+          border-left: 5px solid #4361ee;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.05);
         }
         
         .print-explanation h3 {
           border-left: none;
           padding-left: 0;
+          text-align: center;
+          color: #4361ee;
         }
         
-        .print-explanation-item {
-          margin-bottom: 10px;
-          display: flex;
-          align-items: flex-start;
+        .print-explanation-content {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 15px;
         }
         
-        .print-explanation-icon {
-          margin-right: 10px;
-          min-width: 20px;
-          color: #2575fc;
+        .print-explanation-content p {
+          background: white;
+          padding: 12px 15px;
+          border-radius: 6px;
+          margin: 5px 0;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          border-left: 3px solid #7209b7;
         }
         
         .print-qr {
@@ -912,19 +941,30 @@ function printResults() {
         
         .print-divider {
           height: 3px;
-          background: linear-gradient(to right, #2575fc, transparent);
+          background: linear-gradient(to right, #4361ee, transparent);
           margin: 30px 0;
           border-radius: 3px;
+        }
+        
+        .no-schools-message {
+          background: #fff8e1;
+          border-left: 3px solid #ffc107;
+          padding: 15px;
+          border-radius: 6px;
+          margin: 20px 0;
         }
         
         @media print {
           body {
             padding: 0;
+            background: white;
           }
           
           .print-container {
             padding: 0;
             max-width: 100%;
+            border: none;
+            box-shadow: none;
           }
           
           .print-qr {
@@ -933,6 +973,14 @@ function printResults() {
           
           .print-details, .print-explanation {
             break-inside: avoid;
+          }
+          
+          .print-summary {
+            page-break-inside: avoid;
+          }
+          
+          h2, h3 {
+            page-break-after: avoid;
           }
         }
       </style>
@@ -962,12 +1010,13 @@ function printResults() {
         <div class="print-divider"></div>
         
         <div class="print-watermark">
-          本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同，請參考各校官方公告。
+          本分析結果僅供參考，實際錄取情況可能因多種因素而有所不同，請參考各校官方公告。<br>
+          <strong>KHTW 高雄區會考落點分析系統</strong> | 文件編號: KH${Math.random().toString(36).substring(2, 8).toUpperCase()}
         </div>
         
         <div class="print-footer">
           <p><strong>KHTW 高雄區會考落點分析系統</strong> | ${new Date().getFullYear()} 版權所有</p>
-          <p>本文件由系統自動生成 | 文件編號: KH${Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
+          <p>更多資訊請訪問 <a href="https://sites.google.com/view/khtw/" target="_blank">KHTW官方網站</a></p>
         </div>
       </div>
       
