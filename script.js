@@ -499,20 +499,6 @@ function showExportFormatDialog(content) {
             <span class="export-option-description">可用Excel或試算表軟體開啟，便於數據處理</span>
           </div>
         </button>
-        <button onclick="exportAsFormat('json', '${encodeURIComponent(content)}')" class="export-option">
-          <div class="export-option-icon"><i class="fas fa-file-code"></i></div>
-          <div class="export-option-content">
-            <div class="export-option-title">JSON 檔案 (.json)</div>
-            <span class="export-option-description">適合程式開發者或進階數據分析</span>
-          </div>
-        </button>
-        <button onclick="exportAsFormat('html', '${encodeURIComponent(content)}')" class="export-option">
-          <div class="export-option-icon"><i class="fas fa-file-code"></i></div>
-          <div class="export-option-content">
-            <div class="export-option-title">HTML 檔案 (.html)</div>
-            <span class="export-option-description">網頁格式，保留視覺效果與排版</span>
-          </div>
-        </button>
         <button onclick="printResults()" class="export-option">
           <div class="export-option-icon"><i class="fas fa-print"></i></div>
           <div class="export-option-content">
@@ -588,16 +574,6 @@ function exportAsFormat(format, contentEncoded) {
         const csvContent = convertToCSV(content);
         blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
         fileName = '高雄區會考落點分析結果.csv';
-        break;
-      case 'json':
-        const jsonContent = convertToJSON(content);
-        blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
-        fileName = '高雄區會考落點分析結果.json';
-        break;
-      case 'html':
-        const htmlContent = convertToHTML(content);
-        blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-        fileName = '高雄區會考落點分析結果.html';
         break;
       default:
         blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
@@ -700,82 +676,6 @@ function convertToCSV(content) {
   });
   
   return csvContent;
-}
-
-function formatTxtContent(content) {
-  const now = new Date();
-  const dateTime = now.toLocaleString('zh-TW');
-  const lines = content.split('\n');
-  let formattedContent = '';
-  
-  // Add a more aesthetic header
-  formattedContent += '╔══════════════════════════════════════════════════════════╗\n';
-  formattedContent += '║                 高雄區會考落點分析結果                   ║\n';
-  formattedContent += '╠══════════════════════════════════════════════════════════╣\n';
-  formattedContent += `║  產生時間: ${dateTime.padEnd(42, ' ')}║\n`;
-  formattedContent += '╚══════════════════════════════════════════════════════════╝\n\n';
-  
-  let currentSection = '';
-  let inSchoolsList = false;
-  let schoolCount = 0;
-  
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) return;
-    
-    if (line.includes('分析結果')) {
-      formattedContent += '┌──────────────────────────────────────────────────────┐\n';
-      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
-      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
-    } else if (line.includes('總積分') || line.includes('總積點')) {
-      formattedContent += '▶ ' + line + '\n';
-    } else if (line.includes('可能錄取的學校')) {
-      inSchoolsList = true;
-      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
-      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
-      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
-    } else if (inSchoolsList && line.includes('所學校可能錄取')) {
-      formattedContent += '▶ ' + line + '\n\n';
-    } else if (line.match(/^\w+\s*\(\d+所\)$/)) {
-      const matches = line.match(/^(\w+)\s*\((\d+)所\)$/);
-      if (matches && matches.length >= 3) {
-        const type = matches[1];
-        schoolCount = parseInt(matches[2]);
-        formattedContent += '┌─────────────────────────────────┐\n';
-        formattedContent += '│ ' + `${type} (${schoolCount}所)`.padEnd(35, ' ') + '│\n';
-        formattedContent += '└─────────────────────────────────┘\n';
-      }
-    } else if (inSchoolsList && line.includes('icon')) {
-      const schoolName = line.replace(/.*icon\)/, '').trim();
-      formattedContent += '  ✓ ' + schoolName + '\n';
-    } else if (line.includes('分析詳細資料')) {
-      inSchoolsList = false;
-      currentSection = 'details';
-      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
-      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
-      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
-    } else if (currentSection === 'details' && line.includes(':')) {
-      formattedContent += '  • ' + line + '\n';
-    } else if (line.includes('分析說明')) {
-      currentSection = 'explanation';
-      formattedContent += '\n┌──────────────────────────────────────────────────────┐\n';
-      formattedContent += '│ ' + line.padEnd(60, ' ') + '│\n';
-      formattedContent += '└──────────────────────────────────────────────────────┘\n\n';
-    } else if (currentSection === 'explanation') {
-      formattedContent += '  ► ' + line + '\n';
-    } else {
-      formattedContent += line + '\n';
-    }
-  });
-  
-  // Add footer
-  formattedContent += '\n';
-  formattedContent += '╔══════════════════════════════════════════════════════════╗\n';
-  formattedContent += '║                 KHTW 高雄區會考落點分析系統               ║\n';
-  formattedContent += '║                本分析結果僅供參考使用                     ║\n';
-  formattedContent += '╚══════════════════════════════════════════════════════════╝\n';
-  
-  return formattedContent;
 }
 
 function printResults() {
