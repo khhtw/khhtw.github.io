@@ -207,7 +207,7 @@ async function logUserActivity(action, details = {}) {
       ...details
     };
 
-    const response = await fetch('https://script.google.com/macros/s/AKfycbxDE3AOZdrHcfUHjgs2TIORzWJOOZAH02FY7bf375SPKmGpEiG1qXEVsUASaWL3LWU/exec', {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbwSucpqk3ZFpDV7LclAnfusowHiBdo4RIEG-Aa-5m_pX_FM9uYWsy791tsRz3f_yYEO/exec', {
       method: 'POST',
       body: JSON.stringify(data)
     });
