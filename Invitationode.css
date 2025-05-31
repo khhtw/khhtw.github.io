@@ -80,33 +80,107 @@ body {
   font-size: 1.8rem;
 }
 
-/* Left Side Navigation */
+/* Navigation Menu Styles */
 .nav-menu {
   position: fixed;
   top: 0;
-  left: -260px;
-  width: 260px;
+  right: -300px;  /* Increased width */
+  width: 300px;
   height: 100%;
-  background-color: var(--primary-color);
-  padding-top: 4rem;
+  background: rgba(255, 255, 255, 0.95);  /* Light background with transparency */
+  backdrop-filter: blur(10px);  /* Glass effect */
+  padding-top: 5rem;
   display: flex;
   flex-direction: column;
-  transition: left 0.3s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1050;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .nav-menu.active {
-  left: 0;
+  right: 0;
 }
+
 .nav-menu a {
-  color: #fff;
+  color: var(--text-color);
   text-decoration: none;
-  padding: 1rem 1.5rem;
+  padding: 1.2rem 2rem;
   font-weight: 500;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: var(--transition);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  border: none;
+  margin: 0.3rem 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+
 .nav-menu a:hover {
-  background: rgba(255,255,255,0.2);
+  background: var(--primary-color);
+  color: white;
+  transform: translateX(-5px);
+}
+
+.nav-menu a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+  transition: width 0.3s ease;
+}
+
+.nav-menu a:hover::before {
+  width: 100%;
+}
+
+/* Menu Icon Animation */
+.menu-icon {
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-icon i {
+  font-size: 1.5rem;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.menu-icon.active i {
+  transform: rotate(180deg);
+}
+
+/* Add menu header */
+.nav-menu::before {
+  content: '選單';
+  display: block;
+  padding: 1rem 2rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  border-bottom: 2px solid rgba(45,140,255,0.1);
+  margin-bottom: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 
 /* Main Content */
