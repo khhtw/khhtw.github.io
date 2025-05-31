@@ -65,20 +65,14 @@ function copyInvitationCode() {
 }
 
 function toggleQRCode() {
-    const qrCodeContainer = document.getElementById('qr-code-container');
-    const showQRBtn = document.getElementById('show-qr-btn');
+    const qrCodeModal = document.getElementById('qr-code-modal');
+    const currentCode = document.getElementById('invitation-code-display').textContent;
     
-    if (qrCodeContainer.style.display === 'none') {
-        // Generate QR Code when showing
-        const currentCode = document.getElementById('invitation-code-display').textContent;
-        generateQRCode(currentCode);
-        
-        qrCodeContainer.style.display = 'flex';
-        showQRBtn.textContent = '隱藏 QR Code';
-    } else {
-        qrCodeContainer.style.display = 'none';
-        showQRBtn.textContent = '顯示 QR Code';
-    }
+    // Generate QR Code
+    generateQRCode(currentCode);
+    
+    // Show modal
+    qrCodeModal.style.display = 'flex';
 }
 
 function toggleDarkMode() {
@@ -211,5 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
     backToLandingBtn.addEventListener('click', () => {
         // Replace with the actual URL of your landing page
         window.location.href = 'index.html';
+    });
+
+    // QR Code Modal
+    const qrCodeModal = document.getElementById('qr-code-modal');
+    const qrCodeCloseBtn = qrCodeModal.querySelector('.close-modal');
+    
+    qrCodeCloseBtn.addEventListener('click', () => {
+        qrCodeModal.style.display = 'none';
+    });
+    
+    // Close QR code modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === qrCodeModal) {
+            qrCodeModal.style.display = 'none';
+        }
     });
 });

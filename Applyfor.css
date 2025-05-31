@@ -45,8 +45,21 @@ body {
     padding: 40px;
     width: 90%;
     max-width: 500px;
-    transition: all 0.4s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
+    animation: containerFadeIn 0.6s ease-out;
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dark-mode .container {
@@ -100,14 +113,32 @@ h1 {
     color: var(--secondary-color);
     margin-bottom: 30px;
     letter-spacing: 6px;
-    transition: all 0.4s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
         5px 5px 10px #d1e7f5, 
         -5px -5px 10px #ffffff;
+    position: relative;
+    overflow: hidden;
 }
 
-.code-box:hover {
-    transform: scale(1.02);
+.code-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.code-box:hover::before {
+    left: 100%;
 }
 
 .dark-mode .code-box {
@@ -136,28 +167,32 @@ h1 {
 .qr-code-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 25px;
-    margin-top: 20px;
+    margin: 20px 0;
+    padding: 25px;
+    background: var(--card-background);
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 20px var(--card-shadow),
+        0 5px 10px var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.qr-code-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 15px 30px var(--card-shadow),
+        0 8px 15px var(--card-shadow);
 }
 
 .qr-code-container canvas {
-    max-width: 250px;
+    max-width: 200px;
     height: auto;
-    border-radius: 15px;
-    box-shadow: 
-        0 10px 20px rgba(0,0,0,0.1), 
-        0 5px 10px rgba(0,0,0,0.05);
+    border-radius: 10px;
     transition: transform 0.3s ease;
 }
 
 .qr-code-container canvas:hover {
     transform: scale(1.05);
-}
-
-.dark-mode .qr-code-container canvas {
-    box-shadow: 
-        0 10px 20px rgba(255,255,255,0.1), 
-        0 5px 10px rgba(255,255,255,0.05);
 }
 
 .code-container {
@@ -172,23 +207,29 @@ h1 {
     border: none;
     cursor: pointer;
     margin-left: 15px;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-    width: 30px;
-    height: 30px;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .copy-btn:hover {
     opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
-.copy-btn svg {
-    width: 100%;
-    height: 100%;
-    stroke: var(--secondary-color);
+.dark-mode .copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .copy-feedback {
@@ -196,30 +237,60 @@ h1 {
     font-size: 14px;
     margin-top: 10px;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
+    transform: translateY(-10px);
 }
 
 .copy-feedback.show {
     opacity: 1;
+    transform: translateY(0);
 }
 
 .show-qr-btn {
     display: block;
     margin: 20px auto;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 12px 25px;
+    border-radius: 25px;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 16px;
     font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.show-qr-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
 }
 
 .show-qr-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.show-qr-btn:hover::before {
+    left: 100%;
+}
+
+.show-qr-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .dark-mode .show-qr-btn {
@@ -457,15 +528,30 @@ h1 {
 
 .modal-content {
     background-color: var(--card-background);
-    border-radius: 20px;
-    padding: 30px;
+    border-radius: 25px;
+    padding: 35px;
     width: 90%;
     max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 10px 30px var(--card-shadow);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        0 10px 20px rgba(0, 0, 0, 0.1);
     position: relative;
     color: var(--text-color);
+    animation: modalFadeIn 0.4s ease-out;
+    backdrop-filter: blur(10px);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .close-modal {
@@ -690,4 +776,16 @@ h1 {
     .nav-link {
         font-size: 15px;
     }
+}
+
+#qr-code-modal .modal-content {
+    max-width: 400px;
+    width: 90%;
+    padding: 30px;
+}
+
+#qr-code-modal h2 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-size: 24px;
 }
