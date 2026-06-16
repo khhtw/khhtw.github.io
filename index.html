@@ -3,54 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>網站搬家公告 - 會考落點分析系統</title>
-    <meta http-equiv="refresh" content="3;url=https://tyctw.github.io/spare/">
+    <title>網站全新升級 🚀 會考落點分析系統</title>
+    <!-- content="5 代表 5 秒後自動跳轉，若修改秒數，下方 CSS 動畫秒數也要跟著改 -->
+    <meta http-equiv="refresh" content="5;url=https://tyctw.github.io/spare/">
     <style>
+        /* 載入 Google 圓潤現代字體 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: "Microsoft JhengHei", sans-serif;
+            font-family: 'Noto Sans TC', sans-serif;
+            /* 現代感的柔和漸層背景 (淡藍到淡粉) */
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-            margin: 0;
+            color: #2d3748;
         }
-        .container {
+
+        /* 內容卡片設計 */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 500px;
+            max-width: 450px;
+            width: 90%;
+            /* 卡片浮現動畫 */
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 裝飾性圖示浮動動畫 */
+        .icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
         h1 {
-            color: #333;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a202c;
         }
+
         p {
-            color: #666;
-            line-height: 1.6;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin-bottom: 30px;
         }
-        a {
+
+        /* 進度條外框 */
+        .loader-container {
+            width: 100%;
+            background-color: #edf2f7;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        /* 進度條動畫載入 (5秒跑滿) */
+        .loader-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1, #667eea);
+            width: 0%;
+            animation: load 5s linear forwards;
+        }
+
+        @keyframes load {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* 按鈕美化 */
+        .btn {
             display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 15px;
         }
-        a:hover {
-            background-color: #0056b3;
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📢 網站搬家囉！</h1>
-        <p>我們的「會考落點分析系統」已經遷移至新網址，以提供更穩定的服務。</p>
-        <p>系統將在 3 秒後自動為您跳轉...</p>
-        <a href="https://tyctw.github.io/spare/">若沒有自動跳轉，請點擊這裡前往新站</a>
+    <div class="card">
+        <div class="icon">🎓</div>
+        <h1>系統全新升級</h1>
+        <p>為了提供更順暢的落點分析體驗，<br>本網站已遷移至全新伺服器囉！</p>
+        
+        <div class="loader-container">
+            <div class="loader-bar"></div>
+        </div>
+        
+        <p style="font-size: 14px; color: #a0aec0; margin-bottom: 10px;">頁面將在 5 秒後自動跳轉...</p>
+        
+        <a href="https://tyctw.github.io/spare/" class="btn">立即前往新版系統</a>
     </div>
 </body>
 </html>
